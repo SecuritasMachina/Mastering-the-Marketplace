@@ -1,0 +1,35 @@
+Backup to azure blob
+
+Document steps
+User installation:
+added Directory Reader
+added retry logic
+added AzureRM.Profile
+added AzureRM.Sql
+
+User installs script
+Configures connection string in OffsiteBackupTool
+
+Flow2
+Backup runs
+record status
+Google VM copies data from azure(https://stackoverflow.com/questions/41157327/transfer-file-from-azure-blob-storage-to-google-cloud-storage-programmatically)
+Record result
+
+
+billing? Pricing?
+Customer provides GCP storage account string or AckDev stores?
+
+
+restores
+
+
+support@securitasmachina.com
+
+8sn8Q~5YhzBpvaZ1YBFKVwDxAcOlcedqMf9MTdov
+cfffc58a-962c-4a59-9cf4-00e5eab64cc5
+
+
+https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Authentication/appId/<GUID>/isMSAApp/true
+
+a48ad878-cbf4-4062-8b6d-1732a9e5dc7c

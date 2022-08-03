@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "p6p+fE0Wwb2XoFZcvruQRNL8HnD6OIahxZsSpQoLvLI=",
+  "Hash": "CjRMqllv96k4yAK02zU9Ab6PhFFovApe9lGmzEGPh1g=",
   "Source": "LandingPage",
   "BasePath": "_content/LandingPage",
   "Mode": "Default",
@@ -49,6 +49,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\LandingPage\\wwwroot\\index.html",
+      "SourceId": "LandingPage",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\LandingPage\\wwwroot\\",
+      "BasePath": "_content/LandingPage",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
     },
     {
       "Identity": "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\LandingPage\\wwwroot\\js\\site.js",

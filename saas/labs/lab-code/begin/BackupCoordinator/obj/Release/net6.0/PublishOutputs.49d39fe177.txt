@@ -1,0 +1,12 @@
+C:\data\source\distrib\BackupCoordinator.exe
+C:\data\source\distrib\BackupCoordinator.dll
+C:\data\source\distrib\BackupCoordinator.deps.json
+C:\data\source\distrib\BackupCoordinator.runtimeconfig.json
+C:\data\source\distrib\BackupCoordinator.pdb
+C:\data\source\distrib\Azure.Core.dll
+C:\data\source\distrib\Azure.Core.Amqp.dll
+C:\data\source\distrib\Azure.Messaging.ServiceBus.dll
+C:\data\source\distrib\Microsoft.Azure.Amqp.dll
+C:\data\source\distrib\Microsoft.Bcl.AsyncInterfaces.dll
+C:\data\source\distrib\Newtonsoft.Json.dll
+C:\data\source\distrib\System.Memory.Data.dll

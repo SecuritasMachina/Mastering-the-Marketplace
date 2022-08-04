@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="WebListener20220804" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\WebListener\\obj\\Release\\net6\.0\\PubTmp\\Out\\$" />
+  </parameter>
+</parameters>

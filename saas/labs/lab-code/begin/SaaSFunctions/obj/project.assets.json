@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     "net6.0": {
-      "Microsoft.ApplicationInsights/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights/2.21.0": {
         "type": "package",
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "5.0.0"
@@ -36,12 +36,11 @@
           "lib/netstandard2.0/Microsoft.ApplicationInsights.AspNetCore.dll": {}
         }
       },
-      "Microsoft.ApplicationInsights.DependencyCollector/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.DependencyCollector/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
-          "System.Diagnostics.DiagnosticSource": "5.0.0",
-          "System.Diagnostics.StackTrace": "4.3.0"
+          "Microsoft.ApplicationInsights": "2.21.0",
+          "System.Diagnostics.DiagnosticSource": "5.0.0"
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.AI.DependencyCollector.dll": {}
@@ -53,10 +52,10 @@
           "build/_._": {}
         }
       },
-      "Microsoft.ApplicationInsights.EventCounterCollector/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.EventCounterCollector/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1"
+          "Microsoft.ApplicationInsights": "2.21.0"
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.AI.EventCounterCollector.dll": {}
@@ -65,10 +64,10 @@
           "lib/netstandard2.0/Microsoft.AI.EventCounterCollector.dll": {}
         }
       },
-      "Microsoft.ApplicationInsights.PerfCounterCollector/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.PerfCounterCollector/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
+          "Microsoft.ApplicationInsights": "2.21.0",
           "Microsoft.Extensions.Caching.Memory": "1.0.0",
           "System.Diagnostics.PerformanceCounter": "4.7.0"
         },
@@ -94,13 +93,13 @@
           "lib/netcoreapp3.0/Microsoft.ApplicationInsights.SnapshotCollector.dll": {}
         }
       },
-      "Microsoft.ApplicationInsights.WindowsServer/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.WindowsServer/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.DependencyCollector": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.PerfCounterCollector": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel": "2.20.0-beta1",
+          "Microsoft.ApplicationInsights": "2.21.0",
+          "Microsoft.ApplicationInsights.DependencyCollector": "2.21.0",
+          "Microsoft.ApplicationInsights.PerfCounterCollector": "2.21.0",
+          "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel": "2.21.0",
           "System.Diagnostics.DiagnosticSource": "5.0.0"
         },
         "compile": {
@@ -113,10 +112,10 @@
           "build/_._": {}
         }
       },
-      "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
+          "Microsoft.ApplicationInsights": "2.21.0",
           "System.IO.FileSystem.AccessControl": "4.7.0"
         },
         "compile": {
@@ -129,17 +128,17 @@
           "build/_._": {}
         }
       },
-      "Microsoft.ApplicationInsights.WorkerService/2.20.0-beta1": {
+      "Microsoft.ApplicationInsights.WorkerService/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.DependencyCollector": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.EventCounterCollector": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.PerfCounterCollector": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.WindowsServer": "2.20.0-beta1",
-          "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel": "2.20.0-beta1",
+          "Microsoft.ApplicationInsights": "2.21.0",
+          "Microsoft.ApplicationInsights.DependencyCollector": "2.21.0",
+          "Microsoft.ApplicationInsights.EventCounterCollector": "2.21.0",
+          "Microsoft.ApplicationInsights.PerfCounterCollector": "2.21.0",
+          "Microsoft.ApplicationInsights.WindowsServer": "2.21.0",
+          "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel": "2.21.0",
           "Microsoft.Extensions.DependencyInjection": "2.1.1",
-          "Microsoft.Extensions.Logging.ApplicationInsights": "2.20.0-beta1"
+          "Microsoft.Extensions.Logging.ApplicationInsights": "2.21.0"
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.ApplicationInsights.WorkerService.dll": {}
@@ -843,10 +842,10 @@
           "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
         }
       },
-      "Microsoft.Extensions.Logging.ApplicationInsights/2.20.0-beta1": {
+      "Microsoft.Extensions.Logging.ApplicationInsights/2.21.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.ApplicationInsights": "2.20.0-beta1",
+          "Microsoft.ApplicationInsights": "2.21.0",
           "Microsoft.Extensions.Logging": "2.1.1"
         },
         "compile": {
@@ -919,39 +918,51 @@
           "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {}
         }
       },
-      "Microsoft.IdentityModel.JsonWebTokens/6.15.0": {
+      "Microsoft.IdentityModel.Abstractions/6.22.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Microsoft.IdentityModel.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.IdentityModel.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.JsonWebTokens/6.22.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "6.15.0"
+          "Microsoft.IdentityModel.Tokens": "6.22.0"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Logging/6.15.0": {
+      "Microsoft.IdentityModel.Logging/6.22.0": {
         "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Abstractions": "6.22.0"
+        },
         "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.Logging.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.Logging.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Tokens/6.15.0": {
+      "Microsoft.IdentityModel.Tokens/6.22.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
-          "Microsoft.IdentityModel.Logging": "6.15.0",
+          "Microsoft.IdentityModel.Logging": "6.22.0",
           "System.Security.Cryptography.Cng": "4.5.0"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.Tokens.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll": {}
+          "lib/net6.0/Microsoft.IdentityModel.Tokens.dll": {}
         }
       },
       "Microsoft.Net.Http.Headers/2.1.1": {
@@ -967,7 +978,7 @@
           "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.NET.Sdk.Functions/4.0.1": {
+      "Microsoft.NET.Sdk.Functions/4.1.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.Azure.Functions.Analyzers": "[1.0.0, 2.0.0)",
@@ -1440,21 +1451,6 @@
           }
         }
       },
-      "System.Diagnostics.StackTrace/4.3.0": {
-        "type": "package",
-        "dependencies": {
-          "System.IO.FileSystem": "4.3.0",
-          "System.Reflection": "4.3.0",
-          "System.Reflection.Metadata": "1.4.1",
-          "System.Runtime": "4.3.0"
-        },
-        "compile": {
-          "ref/netstandard1.3/System.Diagnostics.StackTrace.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.3/System.Diagnostics.StackTrace.dll": {}
-        }
-      },
       "System.Diagnostics.Tools/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -1600,17 +1596,17 @@
           }
         }
       },
-      "System.IdentityModel.Tokens.Jwt/6.15.0": {
+      "System.IdentityModel.Tokens.Jwt/6.22.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.JsonWebTokens": "6.15.0",
-          "Microsoft.IdentityModel.Tokens": "6.15.0"
+          "Microsoft.IdentityModel.JsonWebTokens": "6.22.0",
+          "Microsoft.IdentityModel.Tokens": "6.22.0"
         },
         "compile": {
-          "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll": {}
+          "lib/net6.0/System.IdentityModel.Tokens.Jwt.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll": {}
+          "lib/net6.0/System.IdentityModel.Tokens.Jwt.dll": {}
         }
       },
       "System.IO/4.3.0": {
@@ -2607,10 +2603,10 @@
     }
   },
   "libraries": {
-    "Microsoft.ApplicationInsights/2.20.0-beta1": {
-      "sha512": "/AA+Y0g50+3pd/7+qEj/MELVMrNeeXWwZt17LdIitf2hlup93J1nL0cKY5BVze67t2HhvjDBETX3xWkm5F7CVw==",
+    "Microsoft.ApplicationInsights/2.21.0": {
+      "sha512": "btZEDWAFNo9CoYliMCriSMTX3ruRGZTtYw4mo2XyyfLlowFicYVM2Xszi5evDG95QRYV7MbbH3D2RqVwfZlJHw==",
       "type": "package",
-      "path": "microsoft.applicationinsights/2.20.0-beta1",
+      "path": "microsoft.applicationinsights/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2624,7 +2620,7 @@
         "lib/netstandard2.0/Microsoft.ApplicationInsights.dll",
         "lib/netstandard2.0/Microsoft.ApplicationInsights.pdb",
         "lib/netstandard2.0/Microsoft.ApplicationInsights.xml",
-        "microsoft.applicationinsights.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.nuspec"
       ]
     },
@@ -2652,10 +2648,10 @@
         "microsoft.applicationinsights.aspnetcore.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.DependencyCollector/2.20.0-beta1": {
-      "sha512": "xyoqTm5F6nALxzrzDIPpKFJA1MDKH77umeRdtyPTT/dHCR7V1/MrZ9YNK4sxTZZ8m56l2Rr1Wy4kzZtMUN88Fw==",
+    "Microsoft.ApplicationInsights.DependencyCollector/2.21.0": {
+      "sha512": "XArm5tBEUdWs05eDKxnsUUQBduJ45DEQOMnpL7wNWxBpgxn+dbl8nObA2jzExbQhbw6P74lc/1f+RdV4iPaOgg==",
       "type": "package",
-      "path": "microsoft.applicationinsights.dependencycollector/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.dependencycollector/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2670,14 +2666,14 @@
         "lib/netstandard2.0/Microsoft.AI.DependencyCollector.dll",
         "lib/netstandard2.0/Microsoft.AI.DependencyCollector.pdb",
         "lib/netstandard2.0/Microsoft.AI.DependencyCollector.xml",
-        "microsoft.applicationinsights.dependencycollector.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.dependencycollector.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.dependencycollector.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.EventCounterCollector/2.20.0-beta1": {
-      "sha512": "dTIDEcs5Wf6PfHPDzFonjH7vxeJFFRn8362ddBNvjENfBNrdLzfgwqFBFknXS+DMA1kIfigfmaHCz00911AYLw==",
+    "Microsoft.ApplicationInsights.EventCounterCollector/2.21.0": {
+      "sha512": "MfF9IKxx9UhaYHVFQ1VKw0LYvBhkjZtPNUmCTYlGws0N7D2EaupmeIj/EWalqP47sQRedR9+VzARsONcwH8OCA==",
       "type": "package",
-      "path": "microsoft.applicationinsights.eventcountercollector/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.eventcountercollector/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2685,14 +2681,14 @@
         "lib/netstandard2.0/Microsoft.AI.EventCounterCollector.dll",
         "lib/netstandard2.0/Microsoft.AI.EventCounterCollector.pdb",
         "lib/netstandard2.0/Microsoft.AI.EventCounterCollector.xml",
-        "microsoft.applicationinsights.eventcountercollector.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.eventcountercollector.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.eventcountercollector.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.PerfCounterCollector/2.20.0-beta1": {
-      "sha512": "f97topXFurmtXf0PBJO7UMkUVehaJ+UKbzkUvioJVLMWIjDfIQrML6/Xz4zybxopJe5+rgXYcBldwco+MLkouA==",
+    "Microsoft.ApplicationInsights.PerfCounterCollector/2.21.0": {
+      "sha512": "RcckSVkfu+NkDie6/HyM6AVLHmTMVZrUrYnDeJdvRByOc2a+DqTM6KXMtsTHW/5+K7DT9QK5ZrZdi0YbBW8PVA==",
       "type": "package",
-      "path": "microsoft.applicationinsights.perfcountercollector/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.perfcountercollector/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2707,7 +2703,7 @@
         "lib/netstandard2.0/Microsoft.AI.PerfCounterCollector.dll",
         "lib/netstandard2.0/Microsoft.AI.PerfCounterCollector.pdb",
         "lib/netstandard2.0/Microsoft.AI.PerfCounterCollector.xml",
-        "microsoft.applicationinsights.perfcountercollector.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.perfcountercollector.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.perfcountercollector.nuspec"
       ]
     },
@@ -2736,10 +2732,10 @@
         "microsoft.applicationinsights.snapshotcollector.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.WindowsServer/2.20.0-beta1": {
-      "sha512": "NciHML43eHjDbfT7F2cEcGyvAFNu9Ti7+F0X8Ow3v096BS7+v0xE6jiCLf196nh+D0SI09Bx7HocpolJzT867w==",
+    "Microsoft.ApplicationInsights.WindowsServer/2.21.0": {
+      "sha512": "Xbhss7dqbKyE5PENm1lRA9oxzhKEouKGMzgNqJ9xTHPZiogDwKVMK02qdbVhvaXKf9zG8RvvIpM5tnGR5o+Onw==",
       "type": "package",
-      "path": "microsoft.applicationinsights.windowsserver/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.windowsserver/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2754,14 +2750,14 @@
         "lib/netstandard2.0/Microsoft.AI.WindowsServer.dll",
         "lib/netstandard2.0/Microsoft.AI.WindowsServer.pdb",
         "lib/netstandard2.0/Microsoft.AI.WindowsServer.xml",
-        "microsoft.applicationinsights.windowsserver.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.windowsserver.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.windowsserver.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel/2.20.0-beta1": {
-      "sha512": "UnAQzb4FZxOHif0cfdQmmro7F4MyLMaR3pq6WLRB0rwUlqRmNz0OrQSPTCros4eUccm+zM3JbK/Ae0JjDhBBDQ==",
+    "Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel/2.21.0": {
+      "sha512": "7D4oq+9YyagEPx+0kNNOXdG6c7IDM/2d+637nAYKFqdWhNN0IqHZEed0DuG28waj7hBSLM9lBO+B8qQqgfE4rw==",
       "type": "package",
-      "path": "microsoft.applicationinsights.windowsserver.telemetrychannel/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.windowsserver.telemetrychannel/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2776,14 +2772,14 @@
         "lib/netstandard2.0/Microsoft.AI.ServerTelemetryChannel.dll",
         "lib/netstandard2.0/Microsoft.AI.ServerTelemetryChannel.pdb",
         "lib/netstandard2.0/Microsoft.AI.ServerTelemetryChannel.xml",
-        "microsoft.applicationinsights.windowsserver.telemetrychannel.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.windowsserver.telemetrychannel.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.windowsserver.telemetrychannel.nuspec"
       ]
     },
-    "Microsoft.ApplicationInsights.WorkerService/2.20.0-beta1": {
-      "sha512": "IirsnUMCyajXR0cxGUXr3ttPUPjo1lTutRu/tNXEAFKtZwqft0DKw1JYxBs/72J/KXXL+0IEu3WUFyCxXH5PWA==",
+    "Microsoft.ApplicationInsights.WorkerService/2.21.0": {
+      "sha512": "Y/KcaQf+Jy92vdHTd2P8zoaW/IIUl4VkzGkvmBqi1IFQ0JXR4f6LXB73/2GMGhWMc7+QMVHeqW0QDjbLU6Fw5g==",
       "type": "package",
-      "path": "microsoft.applicationinsights.workerservice/2.20.0-beta1",
+      "path": "microsoft.applicationinsights.workerservice/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2791,7 +2787,7 @@
         "lib/netstandard2.0/Microsoft.ApplicationInsights.WorkerService.dll",
         "lib/netstandard2.0/Microsoft.ApplicationInsights.WorkerService.pdb",
         "lib/netstandard2.0/Microsoft.ApplicationInsights.WorkerService.xml",
-        "microsoft.applicationinsights.workerservice.2.20.0-beta1.nupkg.sha512",
+        "microsoft.applicationinsights.workerservice.2.21.0.nupkg.sha512",
         "microsoft.applicationinsights.workerservice.nuspec"
       ]
     },
@@ -3550,10 +3546,10 @@
         "microsoft.extensions.logging.abstractions.nuspec"
       ]
     },
-    "Microsoft.Extensions.Logging.ApplicationInsights/2.20.0-beta1": {
-      "sha512": "AyiUM80sfHrrJEbvgC9yuazFIBa7BoosvUe+MtIWItVPAqL86ZAYtELx0xsZj6O7N7WH+y8zTmpke6hyVara/A==",
+    "Microsoft.Extensions.Logging.ApplicationInsights/2.21.0": {
+      "sha512": "tjzErt5oaLs1caaThu6AbtJuHH0oIGDG/rYCXDruHVGig3m8MyCDuwDsGQwzimY7g4aFyLOKfHc3unBN2G96gw==",
       "type": "package",
-      "path": "microsoft.extensions.logging.applicationinsights/2.20.0-beta1",
+      "path": "microsoft.extensions.logging.applicationinsights/2.21.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3561,7 +3557,7 @@
         "lib/netstandard2.0/Microsoft.Extensions.Logging.ApplicationInsights.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.ApplicationInsights.pdb",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.ApplicationInsights.xml",
-        "microsoft.extensions.logging.applicationinsights.2.20.0-beta1.nupkg.sha512",
+        "microsoft.extensions.logging.applicationinsights.2.21.0.nupkg.sha512",
         "microsoft.extensions.logging.applicationinsights.nuspec"
       ]
     },
@@ -3630,10 +3626,31 @@
         "microsoft.extensions.primitives.nuspec"
       ]
     },
-    "Microsoft.IdentityModel.JsonWebTokens/6.15.0": {
-      "sha512": "IRFqTyIKV7dxIdFS7B6OYEIq6UweeZgpgHjZSjh8m9zZkBTwR9CIJ3wPalpAmJnkFsVdrUs/wprfCM7yyyd/Zg==",
+    "Microsoft.IdentityModel.Abstractions/6.22.0": {
+      "sha512": "iI+9V+2ciCrbheeLjpmjcqCnhy+r6yCoEcid3nkoFWerHgjVuT6CPM4HODUTtUPe1uwks4wcnAujJ8u+IKogHQ==",
       "type": "package",
-      "path": "microsoft.identitymodel.jsonwebtokens/6.15.0",
+      "path": "microsoft.identitymodel.abstractions/6.22.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.IdentityModel.Abstractions.dll",
+        "lib/net45/Microsoft.IdentityModel.Abstractions.xml",
+        "lib/net461/Microsoft.IdentityModel.Abstractions.dll",
+        "lib/net461/Microsoft.IdentityModel.Abstractions.xml",
+        "lib/net472/Microsoft.IdentityModel.Abstractions.dll",
+        "lib/net472/Microsoft.IdentityModel.Abstractions.xml",
+        "lib/net6.0/Microsoft.IdentityModel.Abstractions.dll",
+        "lib/net6.0/Microsoft.IdentityModel.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.IdentityModel.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.IdentityModel.Abstractions.xml",
+        "microsoft.identitymodel.abstractions.6.22.0.nupkg.sha512",
+        "microsoft.identitymodel.abstractions.nuspec"
+      ]
+    },
+    "Microsoft.IdentityModel.JsonWebTokens/6.22.0": {
+      "sha512": "NfE53bz3I3Uep7kfala+Tm34H0BfTfoD09/874QO9hscuQ6IfCpVofXftzjvblotiBXfd3rDweNX45L84aNMlw==",
+      "type": "package",
+      "path": "microsoft.identitymodel.jsonwebtokens/6.22.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3643,16 +3660,18 @@
         "lib/net461/Microsoft.IdentityModel.JsonWebTokens.xml",
         "lib/net472/Microsoft.IdentityModel.JsonWebTokens.dll",
         "lib/net472/Microsoft.IdentityModel.JsonWebTokens.xml",
+        "lib/net6.0/Microsoft.IdentityModel.JsonWebTokens.dll",
+        "lib/net6.0/Microsoft.IdentityModel.JsonWebTokens.xml",
         "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll",
         "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "microsoft.identitymodel.jsonwebtokens.6.15.0.nupkg.sha512",
+        "microsoft.identitymodel.jsonwebtokens.6.22.0.nupkg.sha512",
         "microsoft.identitymodel.jsonwebtokens.nuspec"
       ]
     },
-    "Microsoft.IdentityModel.Logging/6.15.0": {
-      "sha512": "C6ipogdUEjMew1pVAqilUARrwIfVafDHD7fSxNacB9CypLDiAa7Sl+sWsJOHYp2mhwo3G5ADhaMueR9uByCeXw==",
+    "Microsoft.IdentityModel.Logging/6.22.0": {
+      "sha512": "v+BPO40iUEuAOmajdhL6tf2oSeCM5mGdHuuDJI0jr0GpTu3uv+UXh0lEy3DoKMZ52xk3RxDsLfMyzTdt7EC09A==",
       "type": "package",
-      "path": "microsoft.identitymodel.logging/6.15.0",
+      "path": "microsoft.identitymodel.logging/6.22.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3662,16 +3681,18 @@
         "lib/net461/Microsoft.IdentityModel.Logging.xml",
         "lib/net472/Microsoft.IdentityModel.Logging.dll",
         "lib/net472/Microsoft.IdentityModel.Logging.xml",
+        "lib/net6.0/Microsoft.IdentityModel.Logging.dll",
+        "lib/net6.0/Microsoft.IdentityModel.Logging.xml",
         "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll",
         "lib/netstandard2.0/Microsoft.IdentityModel.Logging.xml",
-        "microsoft.identitymodel.logging.6.15.0.nupkg.sha512",
+        "microsoft.identitymodel.logging.6.22.0.nupkg.sha512",
         "microsoft.identitymodel.logging.nuspec"
       ]
     },
-    "Microsoft.IdentityModel.Tokens/6.15.0": {
-      "sha512": "KC7d+0ma56r7XTP6J7WAGaFRiYMLED9qH/Q3TWwpJzvGzAx8afvk/sTWhaquxipTZB/KBIVO6uxpiepcVBd6RA==",
+    "Microsoft.IdentityModel.Tokens/6.22.0": {
+      "sha512": "5EXMewUGlrYr18XvtRgvo/Rx+sBp4PcEC1iM+n35Y2VHkXaOKM9v0+ktd8qZp4SSqF5WpMHnM8YMkFsLXJKJ8w==",
       "type": "package",
-      "path": "microsoft.identitymodel.tokens/6.15.0",
+      "path": "microsoft.identitymodel.tokens/6.22.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -3681,9 +3702,11 @@
         "lib/net461/Microsoft.IdentityModel.Tokens.xml",
         "lib/net472/Microsoft.IdentityModel.Tokens.dll",
         "lib/net472/Microsoft.IdentityModel.Tokens.xml",
+        "lib/net6.0/Microsoft.IdentityModel.Tokens.dll",
+        "lib/net6.0/Microsoft.IdentityModel.Tokens.xml",
         "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll",
         "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.xml",
-        "microsoft.identitymodel.tokens.6.15.0.nupkg.sha512",
+        "microsoft.identitymodel.tokens.6.22.0.nupkg.sha512",
         "microsoft.identitymodel.tokens.nuspec"
       ]
     },
@@ -3700,10 +3723,10 @@
         "microsoft.net.http.headers.nuspec"
       ]
     },
-    "Microsoft.NET.Sdk.Functions/4.0.1": {
-      "sha512": "ETL2yIoB66dUBorl0cllKHXuK1ItXDgC68AhzXX7amnQNv/rG+zS+ivLs7xpczhXq1Tkcdr02rPGoE0X7HTBwQ==",
+    "Microsoft.NET.Sdk.Functions/4.1.1": {
+      "sha512": "G+b+bHtta7P8KPItSWygbVwQhwamU/WWmBoiv3snf8ScVYai3PbC1JSW3H22X+askqxhiw/Tx0yZKdE5oKMhRQ==",
       "type": "package",
-      "path": "microsoft.net.sdk.functions/4.0.1",
+      "path": "microsoft.net.sdk.functions/4.1.1",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -3716,7 +3739,7 @@
         "build/Microsoft.NET.Sdk.Functions.Publish.targets",
         "build/Microsoft.NET.Sdk.Functions.props",
         "build/Microsoft.NET.Sdk.Functions.targets",
-        "microsoft.net.sdk.functions.4.0.1.nupkg.sha512",
+        "microsoft.net.sdk.functions.4.1.1.nupkg.sha512",
         "microsoft.net.sdk.functions.nuspec",
         "tools/net6.0/Microsoft.NET.Sdk.Functions.Generator.dll",
         "tools/net6.0/Microsoft.NET.Sdk.Functions.Generator.runtimeconfig.json",
@@ -4671,46 +4694,6 @@
         "version.txt"
       ]
     },
-    "System.Diagnostics.StackTrace/4.3.0": {
-      "sha512": "BiHg0vgtd35/DM9jvtaC1eKRpWZxr0gcQd643ABG7GnvSlf5pOkY2uyd42mMOJoOmKvnpNj0F4tuoS1pacTwYw==",
-      "type": "package",
-      "path": "system.diagnostics.stacktrace/4.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Diagnostics.StackTrace.dll",
-        "lib/netstandard1.3/System.Diagnostics.StackTrace.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Diagnostics.StackTrace.dll",
-        "ref/netstandard1.3/System.Diagnostics.StackTrace.dll",
-        "ref/netstandard1.3/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/de/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/es/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/fr/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/it/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/ja/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/ko/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/ru/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/zh-hans/System.Diagnostics.StackTrace.xml",
-        "ref/netstandard1.3/zh-hant/System.Diagnostics.StackTrace.xml",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "runtimes/aot/lib/netcore50/System.Diagnostics.StackTrace.dll",
-        "system.diagnostics.stacktrace.4.3.0.nupkg.sha512",
-        "system.diagnostics.stacktrace.nuspec"
-      ]
-    },
     "System.Diagnostics.Tools/4.3.0": {
       "sha512": "UUvkJfSYJMM6x527dJg2VyWPSRqIVB0Z7dbjHst1zmwTXz5CcXSYJFWRpuigfbO1Lf7yfZiIaEUesfnl/g5EyA==",
       "type": "package",
@@ -5156,10 +5139,10 @@
         "system.globalization.extensions.nuspec"
       ]
     },
-    "System.IdentityModel.Tokens.Jwt/6.15.0": {
-      "sha512": "lzJaeRZE4dvPmH9U65J8z9wsrWghlosNYEqwCTjOh5o/gCHHcTV6P6EcYj7xC22AHPYavYh8IUtIqH5MszW1rA==",
+    "System.IdentityModel.Tokens.Jwt/6.22.0": {
+      "sha512": "jxUfcELhBZLq5r4lzlqqgTxwkkxRsGIMatcCMc6bXNQ8879neaIeKH6/8yzyNOV5rme/0xysWvilt1/JlfoVrw==",
       "type": "package",
-      "path": "system.identitymodel.tokens.jwt/6.15.0",
+      "path": "system.identitymodel.tokens.jwt/6.22.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -5169,9 +5152,11 @@
         "lib/net461/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net472/System.IdentityModel.Tokens.Jwt.dll",
         "lib/net472/System.IdentityModel.Tokens.Jwt.xml",
+        "lib/net6.0/System.IdentityModel.Tokens.Jwt.dll",
+        "lib/net6.0/System.IdentityModel.Tokens.Jwt.xml",
         "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll",
         "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.xml",
-        "system.identitymodel.tokens.jwt.6.15.0.nupkg.sha512",
+        "system.identitymodel.tokens.jwt.6.22.0.nupkg.sha512",
         "system.identitymodel.tokens.jwt.nuspec"
       ]
     },
@@ -8090,10 +8075,10 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Microsoft.ApplicationInsights.WorkerService >= 2.20.0-beta1",
+      "Microsoft.ApplicationInsights.WorkerService >= 2.21.0",
       "Microsoft.Azure.WebJobs.Extensions.ApplicationInsights >= 1.0.0-preview4",
-      "Microsoft.NET.Sdk.Functions >= 4.0.1",
-      "System.IdentityModel.Tokens.Jwt >= 6.15.0"
+      "Microsoft.NET.Sdk.Functions >= 4.1.1",
+      "System.IdentityModel.Tokens.Jwt >= 6.22.0"
     ]
   },
   "packageFolders": {
@@ -8142,7 +8127,7 @@
         "dependencies": {
           "Microsoft.ApplicationInsights.WorkerService": {
             "target": "Package",
-            "version": "[2.20.0-beta1, )"
+            "version": "[2.21.0, )"
           },
           "Microsoft.Azure.WebJobs.Extensions.ApplicationInsights": {
             "target": "Package",
@@ -8150,11 +8135,11 @@
           },
           "Microsoft.NET.Sdk.Functions": {
             "target": "Package",
-            "version": "[4.0.1, )"
+            "version": "[4.1.1, )"
           },
           "System.IdentityModel.Tokens.Jwt": {
             "target": "Package",
-            "version": "[6.15.0, )"
+            "version": "[6.22.0, )"
           }
         },
         "imports": [

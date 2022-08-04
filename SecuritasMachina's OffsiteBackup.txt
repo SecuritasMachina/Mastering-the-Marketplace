@@ -2,16 +2,19 @@ Backup to azure blob
 
 Document steps
 User installation:
-added Directory Reader
-added retry logic
-added AzureRM.Profile
-added AzureRM.Sql
+Create automation account, add IAM permissions at subscription(narrow rights)
+Az.Accounts
+Az.Sql
+AzureRM.Profile
+add module AzureRM.Sql
+
 
 User installs script
 Configures connection string in OffsiteBackupTool
 
 Flow2
 Backup runs
+https://weblistener20220804.azurewebsites.net/
 record status
 Google VM copies data from azure(https://stackoverflow.com/questions/41157327/transfer-file-from-azure-blob-storage-to-google-cloud-storage-programmatically)
 Record result

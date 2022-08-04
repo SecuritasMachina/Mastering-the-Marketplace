@@ -46,7 +46,7 @@
           "dependencies": {
             "Microsoft.ApplicationInsights.WorkerService": {
               "target": "Package",
-              "version": "[2.20.0-beta1, )"
+              "version": "[2.21.0, )"
             },
             "Microsoft.Azure.WebJobs.Extensions.ApplicationInsights": {
               "target": "Package",
@@ -54,11 +54,11 @@
             },
             "Microsoft.NET.Sdk.Functions": {
               "target": "Package",
-              "version": "[4.0.1, )"
+              "version": "[4.1.1, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[6.15.0, )"
+              "version": "[6.22.0, )"
             }
           },
           "imports": [

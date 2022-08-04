@@ -49,7 +49,7 @@
 
 param(
     [parameter(Mandatory=$true)]
-	[String] $ResourceGroupName,
+	[String] $ResourceGroupName, 
     [parameter(Mandatory=$true)]
 	[String] $DatabaseServerName,
     [parameter(Mandatory=$true)]
@@ -70,32 +70,38 @@ param(
     [Int32]$RetentionDays
 )
 
-$ErrorActionPreference = 'stop'
+$ErrorActionPreference = 'Continue'
 
 function Login() {
-	$connectionName = "AzureRunAsConnection"
-	try
+	<# try
 	{
-		$servicePrincipalConnection = Get-AutomationConnection -Name $connectionName         
-
-		Write-Verbose "Logging in to Azure..." -Verbose
-
-		Add-AzureRmAccount `
-			-ServicePrincipal `
-			-TenantId $servicePrincipalConnection.TenantId `
-			-ApplicationId $servicePrincipalConnection.ApplicationId `
-			-CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint | Out-Null
-	}
-	catch {
-		if (!$servicePrincipalConnection)
-		{
-			$ErrorMessage = "Connection $connectionName not found."
-			throw $ErrorMessage
-		} else{
-			Write-Error -Message $_.Exception
+		$ConnectionAssetName = "AzureRunAsConnection"
+		Write-Verbose "ConnectionAssetName: $ConnectionAssetName" -Verbose
+		$ConnectionFieldValues = @{"ApplicationId" = $Application.ApplicationId; "TenantId" = $TenantID.TenantId; "CertificateThumbprint" = $Cert.Thumbprint; "SubscriptionId" = $SubscriptionId}
+		
+		foreach($k in $ConnectionFieldValues.Keys){Write-Verbose "$k $($ConnectionFieldValues[$k])"}
+		New-AzAutomationConnection -ResourceGroupName $ResourceGroupName -AutomationAccountName "charlestest1" -Name $ConnectionAssetName -ConnectionTypeName AzureServicePrincipal -ConnectionFieldValues $ConnectionFieldValues
+	}catch
+    {
+		
+			Write-Error -Message $Error[0]
 			throw $_.Exception
-		}
+		
 	}
+	#>
+	try
+{
+    "Logging in to Azure..."
+    Connect-AzAccount -Identity
+}
+catch {
+    Write-Error -Message $_.Exception
+    throw $_.Exception
+}
+
+		
+		Write-Verbose "Logging in to Azure3" -Verbose
+	
 }
 
 function Create-Blob-Container([string]$blobContainerName, $storageContext) {
@@ -112,19 +118,36 @@ function Export-To-Blob-Storage([string]$resourceGroupName, [string]$databaseSer
 	Write-Verbose "Starting database export to databases '$databaseNames'" -Verbose
 	$securePassword = ConvertTo-SecureString –String $databaseAdminPassword –AsPlainText -Force 
 	$creds = New-Object –TypeName System.Management.Automation.PSCredential –ArgumentList $databaseAdminUsername, $securePassword
-
+try
+    { 
 	foreach ($databaseName in $databaseNames.Split(",").Trim()) {
 		Write-Output "Creating request to backup database '$databaseName'"
 
 		$bacpacFilename = $databaseName + (Get-Date).ToString("yyyyMMddHHmm") + ".bacpac"
 		$bacpacUri = $blobStorageEndpoint + $blobContainerName + "/" + $bacpacFilename
 
-		$exportRequest = New-AzureRmSqlDatabaseExport -ResourceGroupName $resourceGroupName –ServerName $databaseServerName `
+		$exportRequest = New-AzSqlDatabaseExport -ResourceGroupName $resourceGroupName –ServerName $databaseServerName `
 			–DatabaseName $databaseName –StorageKeytype "StorageAccessKey" –storageKey $storageKey -StorageUri $BacpacUri `
 			–AdministratorLogin $creds.UserName –AdministratorLoginPassword $creds.Password -ErrorAction "Stop"
-		
+		Write-Output "Creating request to backup database '$databaseName'2"
+		Start-Sleep -s 10
 		# Print status of the export
-		Get-AzureRmSqlDatabaseImportExportStatus -OperationStatusLink $exportRequest.OperationStatusLink -ErrorAction "Stop"
+		$exportStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $exportRequest.OperationStatusLink -ErrorAction "Stop"
+		while ($exportStatus.Status -eq "InProgress")
+{
+    Start-Sleep -s 10
+    $exportStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $exportRequest.OperationStatusLink -ErrorAction "Stop"
+    
+}
+		# let controller backup submitted.... or done?
+	}
+	}
+	catch {
+		
+	
+			Write-Error -Message $_.Exception
+			throw $_.Exception
+		
 	}
 }
 

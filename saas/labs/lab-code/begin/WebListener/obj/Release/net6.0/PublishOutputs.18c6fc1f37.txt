@@ -1,0 +1,14 @@
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\WebListener.exe
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\appsettings.Development.json
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\appsettings.json
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\WebListener.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\WebListener.deps.json
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\WebListener.runtimeconfig.json
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\WebListener.pdb
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Azure.Core.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Azure.Core.Amqp.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Azure.Messaging.ServiceBus.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Microsoft.Azure.Amqp.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\System.Memory.Data.dll

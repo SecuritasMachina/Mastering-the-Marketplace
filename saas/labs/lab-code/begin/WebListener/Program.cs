@@ -46,7 +46,7 @@ app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
             
             Console.WriteLine("recordBackup");
             System.Diagnostics.Trace.TraceWarning("!! /v2/recordBackup !!");
-            //Post to service bus
+            //Post to service bus for particular client
             await new WebWorker().RecordBackupAsync(json);
 
             

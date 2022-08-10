@@ -7,8 +7,8 @@ namespace WebListener
 {
     public class WebWorker
     {
-        string connectionString = "Endpoint=sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
-        string SQLConnectionString = "Server=tcp:test-offsite-server.database.windows.net,1433;Initial Catalog=OffSiteBackup;Persist Security Info=False;User ID=appLogon;Password=wSuaA4Q0rtvHqaQ9MRS2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
+        string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection"); //"Server=tcp:test-offsite-server.database.windows.net,1433;Initial Catalog=OffSiteBackup;Persist Security Info=False;User ID=appLogon;Password=wSuaA4Q0rtvHqaQ9MRS2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         // name of your Service Bus queue
         string queueName = "offsitebackup";
         // the client that owns the connection and can be used to create senders and receivers
@@ -18,16 +18,16 @@ namespace WebListener
         ServiceBusSender sender;
         internal async Task RecordBackupAsync(string json)
         {
-            client = new ServiceBusClient(connectionString);
-            sender = client.CreateSender(queueName);
+           
 
             System.Diagnostics.Trace.TraceInformation("JSON:" + json);
+            string topicEndPoint = "";
             dynamic stuff = JsonConvert.DeserializeObject(json);
             string? msgType = stuff.msgType;
             string? customerGUID = stuff.customerGuid;
             string? backupName = stuff.backupName;
             string? status = stuff.status;
-            
+            string? passPhrase = stuff.passPhrase;
             string? errorMsg = stuff.errormsg;
             
             OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
@@ -49,15 +49,17 @@ namespace WebListener
                     {
                         _OffSiteMessageDTO.azureBlobEndpoint=reader["azureBlobEndpoint"].ToString();
                         _OffSiteMessageDTO.BlobContainerName=reader["azureContainerName"].ToString();
-                       
+                        _OffSiteMessageDTO.passPhrase = reader["passPhrase"].ToString();
                         _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
-
+                        topicEndPoint=reader["topicEndPoint"].ToString();
 
                     }
                 }
             }
             string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
             // create a batch 
+            client = new ServiceBusClient(topicEndPoint);
+            sender = client.CreateSender(customerGUID);
             using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
 

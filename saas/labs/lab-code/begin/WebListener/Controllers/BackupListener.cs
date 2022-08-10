@@ -46,7 +46,7 @@ namespace WebListener.Controllers
                 offSiteMessageDTO.customerGUID  = customerGuid;
                 offSiteMessageDTO.backupName = backupName;
                 string jsonString = JsonSerializer.Serialize(offSiteMessageDTO);
-                //var json = new JavaScriptSerializer().Serialize(new { property = "string" })
+                
                 // create a batch 
                 using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 

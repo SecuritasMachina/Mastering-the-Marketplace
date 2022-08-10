@@ -15,5 +15,6 @@
        // public String BlobSASToken = stuff.BlobSASToken;
         public String errorMsg = "";
         public int? RetentionDays =30;
+        public string? passPhrase;
     }
 }

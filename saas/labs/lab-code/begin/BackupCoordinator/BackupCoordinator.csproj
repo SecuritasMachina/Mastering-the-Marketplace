@@ -5,10 +5,22 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
-
+<ItemGroup> 
+<_CustomFiles Include="azcopy/*" /> 
+<DotnetPublishFiles Include="@(_CustomFiles)"> 
+<DestinationRelativePath>.</DestinationRelativePath> 
+</DotnetPublishFiles> 
+</ItemGroup> 
+<ItemGroup>
+	<None Include="azcopy.exe">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+</ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.9.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

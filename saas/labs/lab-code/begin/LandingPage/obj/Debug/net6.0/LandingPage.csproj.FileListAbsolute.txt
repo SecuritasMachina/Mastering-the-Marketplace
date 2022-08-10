@@ -87,3 +87,10 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\ob
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Debug\net6.0\LandingPage.pdb
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Debug\net6.0\LandingPage.genruntimeconfig.cache
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Debug\net6.0\ref\LandingPage.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Azure.Core.Amqp.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Azure.Messaging.ServiceBus.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.Azure.Amqp.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.Identity.Web.Certificateless.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.IdentityModel.LoggingExtensions.dll

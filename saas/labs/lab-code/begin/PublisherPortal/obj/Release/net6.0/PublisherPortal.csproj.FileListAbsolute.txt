@@ -87,3 +87,6 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPorta
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PublisherPortal.pdb
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PublisherPortal.genruntimeconfig.cache
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\ref\PublisherPortal.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\bin\Release\net6.0\Microsoft.Identity.Web.Certificateless.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\bin\Release\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\bin\Release\net6.0\Microsoft.IdentityModel.LoggingExtensions.dll

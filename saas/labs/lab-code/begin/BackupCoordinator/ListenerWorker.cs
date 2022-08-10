@@ -78,7 +78,7 @@ namespace BackupCoordinator
 
                 if (BlobSASToken != null)
                 {
-                    String command = $"/k azcopy copy \"{BlobStorageEndpoint}{BlobContainerName}/{backupName}?{BlobSASToken}\" \"c:\\temp\\{backupName}\"";
+                    String command = $"/c azcopy copy \"{BlobStorageEndpoint}{BlobContainerName}/{backupName}?{BlobSASToken}\" \"c:\\temp\\{backupName}\"";
                     Console.WriteLine(command);
                     ProcessStartInfo cmdsi = new ProcessStartInfo("cmd.exe");
                     cmdsi.Arguments = command;

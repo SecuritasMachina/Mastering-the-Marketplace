@@ -1,4 +1,5 @@
 C:\data\source\distrib\BackupCoordinator.exe
+C:\data\source\distrib\azcopy.exe
 C:\data\source\distrib\BackupCoordinator.dll
 C:\data\source\distrib\BackupCoordinator.deps.json
 C:\data\source\distrib\BackupCoordinator.runtimeconfig.json

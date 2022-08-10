@@ -20,12 +20,15 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPorta
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.Certificate.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.Certificateless.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.MicrosoftGraph.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.TokenCache.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.UI.Views.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.Identity.Web.UI.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.Abstractions.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.Logging.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.LoggingExtensions.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.Protocols.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\PublisherPortal\obj\Release\net6.0\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll

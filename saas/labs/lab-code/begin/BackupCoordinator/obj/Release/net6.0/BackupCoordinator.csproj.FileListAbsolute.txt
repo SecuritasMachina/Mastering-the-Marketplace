@@ -21,3 +21,4 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\BackupCoordina
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\BackupCoordinator\obj\Release\net6.0\BackupCoordinator.genruntimeconfig.cache
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\BackupCoordinator\obj\Release\net6.0\ref\BackupCoordinator.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\BackupCoordinator\bin\Release\net6.0\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\BackupCoordinator\bin\Release\net6.0\azcopy.exe

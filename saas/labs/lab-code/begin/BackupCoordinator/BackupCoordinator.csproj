@@ -12,11 +12,6 @@
 <DotnetPublishFiles Include="@(_CustomFiles)"> 
 <DestinationRelativePath>.</DestinationRelativePath> 
 </DotnetPublishFiles> 
-</ItemGroup> 
-<ItemGroup>
-	<None Include="azcopy.exe">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
 </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.9.0" />

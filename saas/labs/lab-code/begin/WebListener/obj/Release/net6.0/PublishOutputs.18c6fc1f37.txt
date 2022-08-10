@@ -11,4 +11,10 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\ob
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Microsoft.Azure.Amqp.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\System.Data.SqlClient.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\System.Memory.Data.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\runtimes\win-arm64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\runtimes\win-x64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\runtimes\win-x86\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll

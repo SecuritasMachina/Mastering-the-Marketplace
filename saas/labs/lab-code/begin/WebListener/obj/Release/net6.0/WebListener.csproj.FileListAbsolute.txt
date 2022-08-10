@@ -32,3 +32,9 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bi
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\System.Memory.Data.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Release\net6.0\WebListener.csproj.CopyComplete
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\runtimes\win-arm64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\runtimes\win-x64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\runtimes\win-x86\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Release\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll

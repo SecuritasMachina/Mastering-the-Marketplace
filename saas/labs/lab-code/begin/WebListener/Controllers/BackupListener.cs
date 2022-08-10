@@ -43,7 +43,7 @@ namespace WebListener.Controllers
                 client = new ServiceBusClient(connectionString);
                 sender = client.CreateSender(queueName);
                 OffSiteMessageDTO offSiteMessageDTO = new OffSiteMessageDTO();
-                offSiteMessageDTO.customerGuid = customerGuid;
+                offSiteMessageDTO.customerGUID  = customerGuid;
                 offSiteMessageDTO.backupName = backupName;
                 string jsonString = JsonSerializer.Serialize(offSiteMessageDTO);
                 //var json = new JavaScriptSerializer().Serialize(new { property = "string" })

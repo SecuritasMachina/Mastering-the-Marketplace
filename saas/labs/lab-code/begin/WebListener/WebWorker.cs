@@ -20,11 +20,11 @@ namespace WebListener
         {
            
 
-            System.Diagnostics.Trace.TraceInformation("JSON:" + json);
+            
             string topicEndPoint = "";
             dynamic stuff = JsonConvert.DeserializeObject(json);
             string? msgType = stuff.msgType;
-            string? customerGUID = stuff.customerGuid;
+            string? customerGUID = stuff.customerGUID;
             string? backupName = stuff.backupName;
             string? status = stuff.status;
             string? passPhrase = stuff.passPhrase;
@@ -35,7 +35,7 @@ namespace WebListener
             _OffSiteMessageDTO.msgType=msgType;
             _OffSiteMessageDTO.backupName=backupName;
             _OffSiteMessageDTO.status=status;
-            System.Diagnostics.Trace.TraceError("If you're seeing this, something bad happened");
+           // System.Diagnostics.Trace.TraceError("If you're seeing this, something bad happened");
             using (SqlConnection connection = new SqlConnection(SQLConnectionString))
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {
@@ -75,7 +75,7 @@ namespace WebListener
             {
                 // Use the producer client to send the batch of messages to the Service Bus queue
                 await sender.SendMessagesAsync(messageBatch);
-                System.Diagnostics.Trace.TraceInformation("wrote messageBatch");
+               // System.Diagnostics.Trace.TraceInformation("wrote messageBatch");
                 //await sender.CloseAsync();
                 //Console.WriteLine($"A batch of {numOfMessages} messages has been published to the queue.");
             }
@@ -90,10 +90,44 @@ namespace WebListener
 
         internal async Task RequestRestoreAsync(string json)
         {
-            client = new ServiceBusClient(connectionString);
-            sender = client.CreateSender(queueName);
+            string topicEndPoint = "";
+            dynamic stuff = JsonConvert.DeserializeObject(json);
+            string? msgType = stuff.msgType;
+            string? customerGUID = stuff.customerGUID;
+            string? backupName = stuff.backupName;
+            string? status = stuff.status;
+            string? passPhrase = stuff.passPhrase;
+            string? errorMsg = stuff.errormsg;
+            OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
+            _OffSiteMessageDTO.customerGUID = customerGUID;
+            _OffSiteMessageDTO.msgType = msgType;
+            _OffSiteMessageDTO.backupName = backupName;
+            _OffSiteMessageDTO.status = status;
+            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+            {
+                SqlParameter[] param = new SqlParameter[1];
+                param[0] = new SqlParameter("@customerId", customerGUID);
+                command.Parameters.Add(param[0]);
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        _OffSiteMessageDTO.azureBlobEndpoint = reader["azureBlobEndpoint"].ToString();
+                        _OffSiteMessageDTO.BlobContainerName = reader["azureContainerName"].ToString();
+                        _OffSiteMessageDTO.passPhrase = reader["passPhrase"].ToString();
+                        _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
+                        topicEndPoint = reader["topicEndPoint"].ToString();
 
-            System.Diagnostics.Trace.TraceInformation("JSON:" + json);
+                    }
+                }
+            }
+            string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
+            client = new ServiceBusClient(topicEndPoint);
+            sender = client.CreateSender(customerGUID);
+
+            
 
             // create a batch 
             using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();

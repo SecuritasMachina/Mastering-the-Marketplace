@@ -13,4 +13,8 @@
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Common\Common\Common.csproj" />
+  </ItemGroup>
+
 </Project>

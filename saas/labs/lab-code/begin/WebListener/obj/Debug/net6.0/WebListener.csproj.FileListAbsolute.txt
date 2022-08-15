@@ -32,3 +32,12 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\ob
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Debug\net6.0\WebListener.pdb
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Debug\net6.0\WebListener.genruntimeconfig.cache
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\obj\Debug\net6.0\ref\WebListener.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\runtimes\win-arm64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\runtimes\win-x64\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\runtimes\win-x86\native\sni.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\Common.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\Common.pdb
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\WebListener\bin\Debug\net6.0\Common.dll.config

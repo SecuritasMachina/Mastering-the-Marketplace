@@ -4,6 +4,21 @@
     "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\WebListener\\WebListener.csproj": {}
   },
   "projects": {
+    "C:\\data\\source\\Common\\Common\\Common.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\data\\source\\Common\\Common\\Common.csproj",
+        "projectName": "Common",
+        "projectPath": "C:\\data\\source\\Common\\Common\\Common.csproj",
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
     "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\WebListener\\WebListener.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -31,7 +46,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\data\\source\\Common\\Common\\Common.csproj": {
+                "projectPath": "C:\\data\\source\\Common\\Common\\Common.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

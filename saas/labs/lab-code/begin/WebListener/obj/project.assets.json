@@ -785,6 +785,15 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Common/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Common.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Common.dll": {}
+        }
       }
     }
   },
@@ -3581,11 +3590,17 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "Common/1.0.0": {
+      "type": "project",
+      "path": "../../../../../../Common/Common/Common.csproj",
+      "msbuildProject": "../../../../../../Common/Common/Common.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "Azure.Messaging.ServiceBus >= 7.9.0",
+      "Common >= 1.0.0",
       "Newtonsoft.Json >= 13.0.1",
       "System.Data.SqlClient >= 4.8.3",
       "System.Runtime.Serialization.Json >= 4.3.0"
@@ -3622,7 +3637,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\data\\source\\Common\\Common\\Common.csproj": {
+              "projectPath": "C:\\data\\source\\Common\\Common\\Common.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

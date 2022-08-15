@@ -10,6 +10,7 @@ using WebListener;
 using Common.Statics;
 using Newtonsoft.Json;
 using Common.DTO.V2;
+using System.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -38,7 +39,62 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
+app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, string customerGuid)
+{
 
+    string json = "";
+    string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
+    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection"); //"Server=tcp:test-offsite-server.database.windows.net,1433;Initial Catalog=OffSiteBackup;Persist Security Info=False;User ID=appLogon;Password=wSuaA4Q0rtvHqaQ9MRS2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+    try
+    {
+        AgentConfig agentConfig = new AgentConfig();
+        using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+        using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+        {
+            SqlParameter[] param = new SqlParameter[1];
+            param[0] = new SqlParameter("@customerId", customerGuid);
+            command.Parameters.Add(param[0]);
+            connection.Open();
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+
+                {
+                    agentConfig.passPhrase = reader["passPhrase"].ToString();
+                    agentConfig.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
+                    agentConfig.topicName = "controller";
+                    /* _OffSiteMessageDTO.azureBlobEndpoint = reader["azureBlobEndpoint"].ToString();
+                     _OffSiteMessageDTO.BlobContainerName = reader["azureContainerName"].ToString();
+
+                     _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
+                     topicEndPoint = reader["topicEndPoint"].ToString();
+                    */
+
+                }
+            }
+        }
+        string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+        return jsonPopulated;
+
+    }
+
+    // logger.LogInformation("/v2/config:" + json);
+
+    //System.Diagnostics.Trace.TraceWarning("!! /v2/recordBackup !!");
+    //Post to service bus for particular client
+    // json= await new WebWorker().getConfig(customerGuid);
+
+
+
+    catch (Exception ex)
+    {
+        throw new Exception(ex.Message);
+
+    }
+    return json;
+
+});
 
 app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
 {
@@ -102,6 +158,7 @@ ServiceBusClient client;
 
 // the processor that reads and processes messages from the subscription
 ServiceBusProcessor processor;
+RunTimeSettings.SBConnectionString = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
 client = new ServiceBusClient(RunTimeSettings.SBConnectionString);
 
 // create a processor that we can use to process the messages
@@ -118,7 +175,7 @@ try
     // start processing 
     await processor.StartProcessingAsync();
 
-    logger.LogInformation("Wait for a minute and then press any key to end the processing");
+    //logger.LogInformation("Wait for a minute and then press any key to end the processing");
     // Console.ReadKey();
 
     // stop processing 
@@ -145,7 +202,7 @@ static async Task MessageHandler(ProcessMessageEventArgs args)
     dynamic stuff = JsonConvert.DeserializeObject(body);
     string msgType = stuff.msgType;
     string guid = stuff.guid;
-    if (string.Equals(msgType, "dirlisting", StringComparison.OrdinalIgnoreCase) )
+    if (string.Equals(msgType, "dirlisting", StringComparison.OrdinalIgnoreCase))
     {
         DirListingDTO dirListingDTO = JsonConvert.DeserializeObject<DirListingDTO>(stuff.msg);
     }

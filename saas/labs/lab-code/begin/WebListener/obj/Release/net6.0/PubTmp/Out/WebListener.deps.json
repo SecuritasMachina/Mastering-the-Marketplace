@@ -9,6 +9,7 @@
       "WebListener/1.0.0": {
         "dependencies": {
           "Azure.Messaging.ServiceBus": "7.9.0",
+          "Common": "1.0.0",
           "Newtonsoft.Json": "13.0.1",
           "System.Data.SqlClient": "4.8.3",
           "System.Runtime.Serialization.Json": "4.3.0"
@@ -499,6 +500,11 @@
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
         }
+      },
+      "Common/1.0.0": {
+        "runtime": {
+          "Common.dll": {}
+        }
       }
     }
   },
@@ -906,6 +912,11 @@
       "sha512": "sha512-MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
       "path": "system.xml.xmlserializer/4.3.0",
       "hashPath": "system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    },
+    "Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

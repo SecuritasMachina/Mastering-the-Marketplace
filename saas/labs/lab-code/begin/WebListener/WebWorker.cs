@@ -16,7 +16,37 @@ namespace WebListener
 
         // the sender used to publish messages to the queue
         ServiceBusSender sender;
-        internal async Task RecordBackupAsync(string json)
+        internal  string getConfig(string customerGUID)
+        {
+            OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
+            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+            {
+                SqlParameter[] param = new SqlParameter[1];
+                param[0] = new SqlParameter("@customerId", customerGUID);
+                command.Parameters.Add(param[0]);
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+
+                    {
+                        _OffSiteMessageDTO.passPhrase = reader["passPhrase"].ToString();
+                        /* _OffSiteMessageDTO.azureBlobEndpoint = reader["azureBlobEndpoint"].ToString();
+                         _OffSiteMessageDTO.BlobContainerName = reader["azureContainerName"].ToString();
+
+                         _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
+                         topicEndPoint = reader["topicEndPoint"].ToString();
+                        */
+
+                    }
+                }
+            }
+            string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
+            return jsonPopulated;
+
+        }
+            internal async Task RecordBackupAsync(string json)
         {
            
 

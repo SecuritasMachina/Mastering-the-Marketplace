@@ -5,18 +5,27 @@ namespace WebListener.Utils
 {
     public class SimpleMemoryCache
     {
-        private MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
-
-        public GenericMessage GetOrCreate(object key, GenericMessage cacheEntry)
+        // private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+        public static MemoryCache Cache = null;
+        public GenericMessage GetOrCreate(object key, GenericMessage pCacheEntry)
         {
-            //GenericMessage cacheEntry;
-            if (!_cache.TryGetValue(key, out cacheEntry))// Look for cache key.
+            if (Cache == null)
             {
-                // Key not in cache, so get data.
-                //cacheEntry = createItem();
+                Console.WriteLine("Creating cache");
+                Cache = new MemoryCache(
+            new MemoryCacheOptions
+            {
+                SizeLimit = 12024
+            });
+            }
+            Console.WriteLine("Count:" + Cache.Count);
+            GenericMessage cacheEntry;
+            if (!Cache.TryGetValue(key, out cacheEntry))// Look for cache key.
+            {
 
                 // Save data in cache.
-                _cache.Set(key, cacheEntry);
+                if (pCacheEntry != null)
+                    Cache.Set(key, pCacheEntry);
             }
             return cacheEntry;
         }

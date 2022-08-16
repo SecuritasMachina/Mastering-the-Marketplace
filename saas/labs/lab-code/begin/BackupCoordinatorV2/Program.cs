@@ -1,17 +1,30 @@
 using Azure.Messaging.ServiceBus;
+using BackupCoordinatorV2.Utils;
 using Common.DTO.V2;
 using Common.Statics;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 using System.Text;
 using WebListener;
 using WebListener.Utils;
 //using System.Data.SqlClient;
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<SimpleMemoryCache>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("*","http://localhost:4200",
+                                              "https://securitasmachinacoordinater.azurewebsites.net/");
+                      });
+});
 // Add services to the container.
-
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -32,10 +45,25 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-app.MapFallbackToFile("index.html"); ;
+app.MapFallbackToFile("index.html");
+
+
+
+
+string stm = "SELECT SQLITE_VERSION()";
+var cmd = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+//cmd.CommandText = "DROP TABLE IF EXISTS cars";
+string version = cmd.ExecuteScalar().ToString();
+//cmd.ExecuteNonQuery();
+app.Logger.LogInformation("SELECT SQLITE_VERSION: " + version);
+stm = @"CREATE TABLE mycache(id TEXT PRIMARY KEY,
+            msg TEXT)"; 
+ cmd = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+cmd.ExecuteNonQuery();
+
 app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, string customerGuid)
 {
-
+    app.Logger.LogInformation("looking up "+ customerGuid);
     string json = "";
     string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
     string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
@@ -58,12 +86,7 @@ app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, str
                     agentConfig.passPhrase = reader["passPhrase"].ToString();
                     agentConfig.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
                     agentConfig.topicName = "controller";
-                    /* _OffSiteMessageDTO.azureBlobEndpoint = reader["azureBlobEndpoint"].ToString();
-                     _OffSiteMessageDTO.BlobContainerName = reader["azureContainerName"].ToString();
 
-                     _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
-                     topicEndPoint = reader["topicEndPoint"].ToString();
-                    */
 
                 }
             }
@@ -72,14 +95,6 @@ app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, str
         return jsonPopulated;
 
     }
-
-    // logger.LogInformation("/v2/config:" + json);
-
-    //System.Diagnostics.Trace.TraceWarning("!! /v2/recordBackup !!");
-    //Post to service bus for particular client
-    // json= await new WebWorker().getConfig(customerGuid);
-
-
 
     catch (Exception ex)
     {
@@ -93,24 +108,33 @@ app.MapGet("/v2/getCache/{msgID}", async delegate (HttpContext context, string m
 {
 
     string json = "";
-
+    app.Logger.LogInformation("looking up msgID: " + msgID);
     try
     {
         SimpleMemoryCache simpleMemoryCache = new SimpleMemoryCache();
         GenericMessage genericMessage = new GenericMessage();
-        genericMessage = simpleMemoryCache.GetOrCreate(msgID, genericMessage);
-
+        genericMessage = simpleMemoryCache.GetOrCreate(msgID, null);
+        if (genericMessage == null)
+        {
+            genericMessage = new GenericMessage();
+            genericMessage.msgType = "dirListing";
+            genericMessage.msg = msgID;
+        }
+        else
+        {
+            genericMessage.guid = msgID;
+        }
 
         json = JsonConvert.SerializeObject(genericMessage);
         return json;
-
     }
     catch (Exception ex)
     {
+        app.Logger.LogError(ex.ToString());
         throw new Exception(ex.Message);
 
     }
-    return json;
+    //return json;
 
 });
 app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
@@ -209,16 +233,36 @@ static async Task MessageHandler(ProcessMessageEventArgs args)
 {
     string body = args.Message.Body.ToString();
     Console.WriteLine(body);
+    
     dynamic stuff = JsonConvert.DeserializeObject(body);
     string msgType = stuff.msgType;
     string guid = stuff.guid;
     if (string.Equals(msgType, "dirlisting", StringComparison.OrdinalIgnoreCase))
     {
-        DirListingDTO dirListingDTO = JsonConvert.DeserializeObject<DirListingDTO>(stuff.msg);
+        //DirListingDTO dirListingDTO = JsonConvert.DeserializeObject<DirListingDTO>(stuff.msg);
     }
-    SimpleMemoryCache simpleMemoryCache = new SimpleMemoryCache();
+
+    //cmd.CommandText = "DROP TABLE IF EXISTS cars";
+    //string version = cmd.ExecuteScalar().ToString();
+    //cmd.ExecuteNonQuery();
+    //app.Logger.LogInformation("SELECT SQLITE_VERSION: " + version);
+    
+    
+    string stm = "INSERT INTO mycache(id, msg) VALUES($myId, $myJson)";
+    SqliteCommand cmd2 = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+    SqliteParameter myParm1 = cmd2.CreateParameter();
+    myParm1.ParameterName = "$myId";
+    myParm1.Value = "dirlisting-" + guid;
+    SqliteParameter myParm2 = cmd2.CreateParameter();
+    myParm2.ParameterName = "$myJson";
+    myParm2.Value = stuff.msg;
+    cmd2.ExecuteNonQuery();
+    /*SimpleMemoryCache simpleMemoryCache = new SimpleMemoryCache();
     GenericMessage genericMessage = new GenericMessage();
-    simpleMemoryCache.GetOrCreate("dirlisting" + guid, genericMessage);
+    genericMessage.msgType = "dirlisting";
+    genericMessage.msg = stuff.msg;
+    simpleMemoryCache.GetOrCreate("dirlisting-" + guid, genericMessage);
+    */
     //logger.LogInformation(body);
 
     // complete the message. messages is deleted from the subscription. 

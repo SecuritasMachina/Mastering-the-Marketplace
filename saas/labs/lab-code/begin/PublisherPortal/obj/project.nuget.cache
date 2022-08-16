@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "nfkFTHNo4xLRNaRSOwugV5vO6f9OhA3icddoX1Wc1vbUUtAUKjFkDM1kArjX2kXl72Yo+8cIdmRHoUicKhHRuA==",
+  "dgSpecHash": "lKaYd1vTPknMlycwiexpHt2MfXuvn7tNjMgMa6ts8vUG0Xm4qJdvuPTTf3/a2uE9Kz0nN6D1pBHo5pdhUulAaA==",
   "success": true,
   "projectFilePath": "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\PublisherPortal\\PublisherPortal.csproj",
   "expectedPackageFiles": [
@@ -9,8 +9,8 @@
     "C:\\Users\\charl\\.nuget\\packages\\azure.security.keyvault.certificates\\4.1.0\\azure.security.keyvault.certificates.4.1.0.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\azure.security.keyvault.secrets\\4.1.0\\azure.security.keyvault.secrets.4.1.0.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\marketplace.saas.client\\1.0.0\\marketplace.saas.client.1.0.0.nupkg.sha512",
-    "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.7\\microsoft.aspnetcore.authentication.jwtbearer.6.0.7.nupkg.sha512",
-    "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\6.0.7\\microsoft.aspnetcore.authentication.openidconnect.6.0.7.nupkg.sha512",
+    "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.8\\microsoft.aspnetcore.authentication.jwtbearer.6.0.8.nupkg.sha512",
+    "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\6.0.8\\microsoft.aspnetcore.authentication.openidconnect.6.0.8.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.8\\microsoft.aspnetcore.cryptography.internal.5.0.8.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.dataprotection\\5.0.8\\microsoft.aspnetcore.dataprotection.5.0.8.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.aspnetcore.dataprotection.abstractions\\5.0.8\\microsoft.aspnetcore.dataprotection.abstractions.5.0.8.nupkg.sha512",

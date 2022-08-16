@@ -32,7 +32,7 @@
           "lib/netstandard2.0/Azure.Core.Amqp.dll": {}
         }
       },
-      "Azure.Messaging.ServiceBus/7.9.0": {
+      "Azure.Messaging.ServiceBus/7.10.0": {
         "type": "package",
         "dependencies": {
           "Azure.Core": "1.25.0",
@@ -836,16 +836,16 @@
         "pkgicon.png"
       ]
     },
-    "Azure.Messaging.ServiceBus/7.9.0": {
-      "sha512": "3JdsbpLSY3uLuRPsqpSxItkIwnFBSFYgxsynD6bDr/riQrX+fhXibp3S+rV4HJXZ2IdkzgVqrlII7P7fn0C07g==",
+    "Azure.Messaging.ServiceBus/7.10.0": {
+      "sha512": "eB6r5TYS9IudyfypXAsRWydCmoCsavi8k6mBmFaNPlRAcB7GWwdU9TjMBGpF6anKCmWVj3+82aIJ22nXGbrfCw==",
       "type": "package",
-      "path": "azure.messaging.servicebus/7.9.0",
+      "path": "azure.messaging.servicebus/7.10.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "CHANGELOG.md",
         "README.md",
-        "azure.messaging.servicebus.7.9.0.nupkg.sha512",
+        "azure.messaging.servicebus.7.10.0.nupkg.sha512",
         "azure.messaging.servicebus.nuspec",
         "azureicon.png",
         "lib/netstandard2.0/Azure.Messaging.ServiceBus.dll",
@@ -3599,7 +3599,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Azure.Messaging.ServiceBus >= 7.9.0",
+      "Azure.Messaging.ServiceBus >= 7.10.0",
       "Common >= 1.0.0",
       "Newtonsoft.Json >= 13.0.1",
       "System.Data.SqlClient >= 4.8.3",
@@ -3656,7 +3656,7 @@
         "dependencies": {
           "Azure.Messaging.ServiceBus": {
             "target": "Package",
-            "version": "[7.9.0, )"
+            "version": "[7.10.0, )"
           },
           "Newtonsoft.Json": {
             "target": "Package",

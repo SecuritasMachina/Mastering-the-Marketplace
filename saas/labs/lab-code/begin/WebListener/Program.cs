@@ -11,6 +11,7 @@ using Common.Statics;
 using Newtonsoft.Json;
 using Common.DTO.V2;
 using System.Data.SqlClient;
+using WebListener.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -95,7 +96,29 @@ app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, str
     return json;
 
 });
+app.MapGet("/v2/getCache/{msgID}", async delegate (HttpContext context, string msgID)
+{
 
+    string json = "";
+  
+    try
+    {
+        SimpleMemoryCache simpleMemoryCache = new SimpleMemoryCache();
+        GenericMessage genericMessage = new GenericMessage();
+        genericMessage = simpleMemoryCache.GetOrCreate(msgID, genericMessage);
+
+
+        json = JsonConvert.SerializeObject(genericMessage);
+        return json;
+
+    }catch (Exception ex)
+    {
+        throw new Exception(ex.Message);
+
+    }
+    return json;
+
+});
 app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
 {
     using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
@@ -175,13 +198,6 @@ try
     // start processing 
     await processor.StartProcessingAsync();
 
-    //logger.LogInformation("Wait for a minute and then press any key to end the processing");
-    // Console.ReadKey();
-
-    // stop processing 
-    // Console.WriteLine("\nStopping the receiver...");
-    // await processor.StopProcessingAsync();
-    //Console.WriteLine("Stopped receiving messages");
 }
 catch (Exception ex)
 {
@@ -206,6 +222,9 @@ static async Task MessageHandler(ProcessMessageEventArgs args)
     {
         DirListingDTO dirListingDTO = JsonConvert.DeserializeObject<DirListingDTO>(stuff.msg);
     }
+    SimpleMemoryCache simpleMemoryCache = new SimpleMemoryCache();
+    GenericMessage genericMessage = new GenericMessage();
+    simpleMemoryCache.GetOrCreate("dirlisting" + guid, genericMessage);
     //logger.LogInformation(body);
 
     // complete the message. messages is deleted from the subscription. 

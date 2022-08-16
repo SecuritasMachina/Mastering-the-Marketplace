@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "0wjEGeQh2Ajhs3SqtyzZo54yiTtsgmN9u7uVtjJ7SEQjcEiZHCjr2nvnCzJFV548JmzMvgWQgtIJU3TYCJWK3w==",
+  "dgSpecHash": "LdZ+yvIrfpekZe16HvpC5iAbdnWFA+YHTiDDjJY0etEC2gIw2zwA4EJP/oy55zoKs4Ls/Vay7MIZWs9c/HB+Bw==",
   "success": true,
   "projectFilePath": "C:\\data\\source\\Mastering-the-Marketplace\\saas\\labs\\lab-code\\begin\\WebListener\\WebListener.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\charl\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\azure.core.amqp\\1.2.0\\azure.core.amqp.1.2.0.nupkg.sha512",
-    "C:\\Users\\charl\\.nuget\\packages\\azure.messaging.servicebus\\7.9.0\\azure.messaging.servicebus.7.9.0.nupkg.sha512",
+    "C:\\Users\\charl\\.nuget\\packages\\azure.messaging.servicebus\\7.10.0\\azure.messaging.servicebus.7.10.0.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.azure.amqp\\2.5.10\\microsoft.azure.amqp.2.5.10.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\charl\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",

@@ -46,7 +46,7 @@
           "dependencies": {
             "Azure.Messaging.ServiceBus": {
               "target": "Package",
-              "version": "[7.9.0, )"
+              "version": "[7.10.0, )"
             },
             "Marketplace.SaaS.Client": {
               "target": "Package",
@@ -54,14 +54,14 @@
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[6.0.7, )",
+              "version": "[6.0.8, )",
               "noWarn": [
                 "NU1605"
               ]
             },
             "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
               "target": "Package",
-              "version": "[6.0.7, )",
+              "version": "[6.0.8, )",
               "noWarn": [
                 "NU1605"
               ]

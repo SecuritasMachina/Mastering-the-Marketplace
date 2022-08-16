@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "WebListener/1.0.0": {
         "dependencies": {
-          "Azure.Messaging.ServiceBus": "7.9.0",
+          "Azure.Messaging.ServiceBus": "7.10.0",
           "Common": "1.0.0",
           "Newtonsoft.Json": "13.0.1",
           "System.Data.SqlClient": "4.8.3",
@@ -46,7 +46,7 @@
           }
         }
       },
-      "Azure.Messaging.ServiceBus/7.9.0": {
+      "Azure.Messaging.ServiceBus/7.10.0": {
         "dependencies": {
           "Azure.Core": "1.25.0",
           "Azure.Core.Amqp": "1.2.0",
@@ -56,8 +56,8 @@
         },
         "runtime": {
           "lib/netstandard2.0/Azure.Messaging.ServiceBus.dll": {
-            "assemblyVersion": "7.9.0.0",
-            "fileVersion": "7.900.22.36103"
+            "assemblyVersion": "7.10.0.0",
+            "fileVersion": "7.1000.22.41103"
           }
         }
       },
@@ -528,12 +528,12 @@
       "path": "azure.core.amqp/1.2.0",
       "hashPath": "azure.core.amqp.1.2.0.nupkg.sha512"
     },
-    "Azure.Messaging.ServiceBus/7.9.0": {
+    "Azure.Messaging.ServiceBus/7.10.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3JdsbpLSY3uLuRPsqpSxItkIwnFBSFYgxsynD6bDr/riQrX+fhXibp3S+rV4HJXZ2IdkzgVqrlII7P7fn0C07g==",
-      "path": "azure.messaging.servicebus/7.9.0",
-      "hashPath": "azure.messaging.servicebus.7.9.0.nupkg.sha512"
+      "sha512": "sha512-eB6r5TYS9IudyfypXAsRWydCmoCsavi8k6mBmFaNPlRAcB7GWwdU9TjMBGpF6anKCmWVj3+82aIJ22nXGbrfCw==",
+      "path": "azure.messaging.servicebus/7.10.0",
+      "hashPath": "azure.messaging.servicebus.7.10.0.nupkg.sha512"
     },
     "Microsoft.Azure.Amqp/2.5.10": {
       "type": "package",

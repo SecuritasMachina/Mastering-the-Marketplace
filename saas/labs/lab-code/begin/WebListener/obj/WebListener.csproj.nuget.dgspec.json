@@ -65,7 +65,7 @@
           "dependencies": {
             "Azure.Messaging.ServiceBus": {
               "target": "Package",
-              "version": "[7.9.0, )"
+              "version": "[7.10.0, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

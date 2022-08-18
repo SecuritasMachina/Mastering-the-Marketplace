@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using BackupCoordinatorV2.Utils;
 using Common.DTO.V2;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
@@ -52,7 +53,7 @@ namespace WebListener
             string? status = stuff.status;
             string? passPhrase = stuff.passPhrase;
             string? errorMsg = stuff.errormsg;
-
+            DBSingleTon.Instance.write2Log(customerGUID, $"Recording backup {backupName}");
             OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
             _OffSiteMessageDTO.customerGUID = customerGUID;
             _OffSiteMessageDTO.msgType = msgType;
@@ -111,7 +112,7 @@ namespace WebListener
             }
         }
 
-        internal async Task RequestRestoreAsync(string json)
+        internal async Task RequestRestoreAsync(string? json)
         {
            
             dynamic stuff = JsonConvert.DeserializeObject(json);
@@ -125,6 +126,7 @@ namespace WebListener
             genericMessage.msgType = "restoreFile";
             genericMessage.msg = json;
             genericMessage.guid = customerGUID;
+            DBSingleTon.Instance.write2Log(customerGUID, $"Requested {backupName} to be restored");
             /*using (SqlConnection connection = new SqlConnection(SQLConnectionString))
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {

@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { CommonModule } from '@angular/common'
+import { ActivatedRoute } from '@angular/router'
+import { NavMenuComponent } from '../../nav-menu/nav-menu.component';
 @Component({
   selector: 'app-dir-listing',
   templateUrl: './dir-listing.component.html',
@@ -15,18 +16,25 @@ export class DirListingComponent implements OnInit {
     'Accept': 'application/json',
     'enctype': 'multipart/form-data'
   });
-  public guid = "ab50c41e-3814-4533-8f68-a691b4da9043";
- // const options = new RequestOptions({ headers: this.headers });
+  
+  id: string | null | undefined;
+  _http: HttpClient;
+  // const options = new RequestOptions({ headers: this.headers });
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(http: HttpClient, private _Activatedroute: ActivatedRoute) {
     //var guid = 'ab50c41e-3814-4533-8f68-a691b4da9043';
-
+    this._http = http;
     console.info('environment.appServerURL', environment.appServerURL);
-    http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this.guid).subscribe(result => {
+    
+  }
+
+  ngOnInit(): void {
+    this.id = this._Activatedroute.snapshot.paramMap.get("id");
+    this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this.id).subscribe(result => {
       console.info('result', result);
       this.genericMsg.msg = result.msg;
       this.genericMsg.guid = result.guid;
-      this.guid = result.guid;
+      //this.guid = result.guid;
 
       var tmp1 = JSON.parse(this.genericMsg.msg);
       tmp1.fileDTOs.forEach((obj: any, index: any) => {
@@ -40,19 +48,17 @@ export class DirListingComponent implements OnInit {
       //this.dirListingDTO = Object.assign({}, tmp1.fileDTOs); 
       console.info(' this.dirListingDTO', this.dirListingDTO);
       // console.info(' this.dirListingDTO length', this.dirListingDTO.length);
-    }, error => console.error(error));
-  }
-  
-  ngOnInit(): void {
+    }, (error: any) => console.error(error));
+    console.log("this.id",this.id);
   }
   async restoreFile(pRestoreFileName: string): Promise<void> {
     console.info(' pRestoreFileName', pRestoreFileName);
     //this.httpCall("POST", pRestoreFileName)
-    const response = await fetch(environment.appServerURL +"/api/v2/requestRestore", {
+    const response = await fetch(environment.appServerURL + "/api/v2/requestRestore", {
       method: 'POST',
       body: JSON.stringify({
         backupName: pRestoreFileName,
-        customerGUID: this.guid,
+        customerGUID: NavMenuComponent.guid,
       }),
       headers: {
         'Content-Type': 'application/json',

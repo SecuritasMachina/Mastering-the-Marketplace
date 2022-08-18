@@ -1,10 +1,15 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Common.DTO.V2;
+using Microsoft.Data.Sqlite;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace BackupCoordinatorV2.Utils
 {
-    public class DBSIngleTon
+    public class DBSingleTon
     {
-        private DBSIngleTon()
+        private static SqliteConnection con;
+        private static DBSingleTon instance = null;
+        private DBSingleTon()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
             con = new SqliteConnection(connectionStringBuilder.ToString());
@@ -14,16 +19,55 @@ namespace BackupCoordinatorV2.Utils
         {
             return con;
         }
-        private static SqliteConnection con;
-        private static DBSIngleTon instance = null;
+        public void write2Log(string custGuid,string msg)
+        {
+            DateTime now = DateTime.UtcNow;
+            long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+
+            string stm = "INSERT INTO mylog(id, logTime,msg) VALUES(@myId, @logTime,@myJson)";
+            SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+            cmd2.Parameters.AddWithValue("@myId", custGuid);
+            cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
+            cmd2.Parameters.AddWithValue("@myJson", msg);
+            cmd2.Prepare();
+            cmd2.ExecuteNonQuery();
+            
+        }
+        public List<LogMsgDTO> getLogs(string custGuid)
+        {
+            List<LogMsgDTO> ret = new List<LogMsgDTO>();
+            DateTime now = DateTime.UtcNow;
+            long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+
+            string stm = "select logTime,msg from mylog where id=@myId order by logTime";
+            SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+            cmd2.Parameters.AddWithValue("@myId", custGuid);
+           
+            cmd2.Prepare();
+            
+            using SqliteDataReader rdr = cmd2.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                LogMsgDTO logMsgDTO = new LogMsgDTO();
+                logMsgDTO.logTime = rdr.GetInt32(0);
+                logMsgDTO.msg = rdr.GetString(1);
+                logMsgDTO.id = custGuid;
+                ret.Add(logMsgDTO);
+               // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
+            }
+            return ret;
+
+        }
+        
        
-        public static DBSIngleTon Instance
+        public static DBSingleTon Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new DBSIngleTon();
+                    instance = new DBSingleTon();
                 }
                 return instance;
             }

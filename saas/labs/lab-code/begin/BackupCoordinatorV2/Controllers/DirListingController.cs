@@ -23,7 +23,7 @@ namespace BackupCoordinatorV2.Controllers
         public IEnumerable<DirListingDTO> Get()
         {
             string stm = "select id,msg from mycache where id=@myId";
-            SqliteCommand cmd2 = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+            SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", "dirListing-ab50c41e-3814-4533-8f68-a691b4da9043");
 
             cmd2.Prepare();

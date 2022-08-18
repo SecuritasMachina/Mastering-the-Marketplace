@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { DirListingComponent } from './Components/dir-listing/dir-listing.component';
+import { LogListComponent } from './Components/log-list/log-list.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { DirListingComponent } from './Components/dir-listing/dir-listing.compon
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    DirListingComponent
+    DirListingComponent,
+    LogListComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +31,8 @@ import { DirListingComponent } from './Components/dir-listing/dir-listing.compon
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'dirListing', component: DirListingComponent },
+      { path: 'dirListing/:id', component: DirListingComponent },
+      { path: 'logListing/:id', component: LogListComponent },
     ])
   ],
   providers: [],

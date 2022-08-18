@@ -53,64 +53,22 @@ app.MapFallbackToFile("index.html");
 
 
 string stm = "SELECT SQLITE_VERSION()";
-var cmd = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+var cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 string version = cmd.ExecuteScalar().ToString();
 
 app.Logger.LogInformation("SELECT SQLITE_VERSION: " + version);
 stm = @"CREATE TABLE mycache(id TEXT PRIMARY KEY,
             msg TEXT)";
-cmd = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+cmd.ExecuteNonQuery();
+stm = @"CREATE TABLE mylog(id TEXT, logTime REAL,
+            msg TEXT)";
+cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
 
 
 
-app.MapPost("/api/v2/recordBackup", async delegate (HttpContext context)
-{
-    using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
-    {
-        string json = await reader.ReadToEndAsync();
-        try
-        {
 
-            // logger.LogInformation("/v2/recordBackup:" + json);
-
-            //System.Diagnostics.Trace.TraceWarning("!! /v2/recordBackup !!");
-            //Post to service bus for particular client
-            await new WebWorker().RecordBackupAsync(json);
-
-
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-
-        }
-        return json;
-    }
-});
-app.MapPost("/api/v2/requestRestore", async delegate (HttpContext context)
-{
-    using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
-    {
-        string json = await reader.ReadToEndAsync();
-        try
-        {
-
-            // logger.LogInformation("/v2/requestRestore:" + json);
-            //System.Diagnostics.Trace.TraceWarning("!! /v2/requestRestore !!");
-            //Post to service bus
-            await new WebWorker().RequestRestoreAsync(json);
-
-
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-
-        }
-        return json;
-    }
-});
 
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Common.DTO.V2;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using WebListener.Models;
@@ -120,7 +121,10 @@ namespace WebListener
             string? status = stuff.status;
             string? passPhrase = stuff.passPhrase;
             string? errorMsg = stuff.errormsg;
-            
+            GenericMessage genericMessage = new GenericMessage();
+            genericMessage.msgType = "restoreFile";
+            genericMessage.msg = json;
+            genericMessage.guid = customerGUID;
             /*using (SqlConnection connection = new SqlConnection(SQLConnectionString))
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {
@@ -142,15 +146,20 @@ namespace WebListener
                 }
             }
             */
-            //string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
+            string jsonPopulated = JsonConvert.SerializeObject(genericMessage);
             try
             {
-                client = new ServiceBusClient("Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=");
+                //string endpoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=defaultSender;SharedAccessKey=vnoGGku4jwmkcYhn/+UNIKngq+CtbJaoZK0uPBMZzk8=;EntityPath=ab50c41e-3814-4533-8f68-a691b4da9043";
+               // endpoint = "https://SecuritasMachinaOffsiteClients.servicebus.windows.net/ab50c41e-3814-4533-8f68-a691b4da9043";
+                string endpoint= "Endpoint = sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
+                client = new ServiceBusClient(endpoint);
                 sender = client.CreateSender(customerGUID);
-                ServiceBusMessage message = new ServiceBusMessage(json);
+                ServiceBusMessage message = new ServiceBusMessage(jsonPopulated);
                 await sender.SendMessageAsync(message);
-                System.Diagnostics.Trace.TraceInformation("wrote json:" + json+" to "+ customerGUID);
-                Thread.Sleep(5000);
+                //sender. .CloseAsync();
+                System.Diagnostics.Trace.TraceInformation("wrote json:" + jsonPopulated + " to "+ customerGUID);
+                //Thread.Sleep(15000);
+                
             }
             catch(Exception ex)
             {

@@ -12,12 +12,13 @@ using WebListener.Utils;
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddControllers().AddJsonOptions();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("*", "http://localhost:4200",
+                          policy.WithOrigins("*", "http://localhost:4200", "https://localhost:44424",
                                               "https://securitasmachinacoordinater.azurewebsites.net/");
                       });
 });
@@ -62,7 +63,7 @@ cmd.ExecuteNonQuery();
 
 
 
-app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
+app.MapPost("/api/v2/recordBackup", async delegate (HttpContext context)
 {
     using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
     {
@@ -86,7 +87,7 @@ app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
         return json;
     }
 });
-app.MapPost("/v2/requestRestore", async delegate (HttpContext context)
+app.MapPost("/api/v2/requestRestore", async delegate (HttpContext context)
 {
     using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
     {

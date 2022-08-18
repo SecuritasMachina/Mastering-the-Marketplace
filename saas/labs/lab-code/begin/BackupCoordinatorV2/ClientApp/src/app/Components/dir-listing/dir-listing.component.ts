@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-dir-listing',
   templateUrl: './dir-listing.component.html',
@@ -12,7 +13,10 @@ export class DirListingComponent implements OnInit {
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     var guid = 'ab50c41e-3814-4533-8f68-a691b4da9043';
-    http.get<GenericMsg>(baseUrl + 'v3/getCache/dirListing-' + guid).subscribe(result => {
+    //DirListingController
+    //http.get<GenericMsg>(baseUrl + 'v3/getCache/dirListing-' + guid).subscribe(result => {
+    console.info('environment.appServerURL', environment.appServerURL);
+    http.get<GenericMsg>(environment.appServerURL + '/v3/getCache/dirListing-' + guid).subscribe(result => {
       console.info('result',result);
       this.genericMsg.msg = result.msg;
       console.info('this.genericMsg.msg',this.genericMsg.msg);

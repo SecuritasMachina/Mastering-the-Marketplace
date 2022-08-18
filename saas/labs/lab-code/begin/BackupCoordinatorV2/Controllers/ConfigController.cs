@@ -24,7 +24,7 @@ namespace BackupCoordinatorV2.Controllers
         }
 
         [HttpGet]
-        [Route("/v2/config/{customerGuid}")]
+        [Route("/api/v2/config/{customerGuid}")]
         public string Get(string customerGuid)
         {
             string json = "";

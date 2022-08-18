@@ -25,7 +25,7 @@ namespace BackupCoordinatorV2.Controllers
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
-        [Route("/v3/putCache/{itemKey}")]
+        [Route("/api/v3/putCache/{itemKey}")]
         public ActionResult<string> PostAsync([FromBody] object value, string itemKey)
         {
 
@@ -67,7 +67,7 @@ namespace BackupCoordinatorV2.Controllers
         }
 
         [HttpGet]
-        [Route("/v3/getCache/{itemKey}")]
+        [Route("/api/v3/getCache/{itemKey}")]
         public string Get(string itemKey)
         {
             string json = "";

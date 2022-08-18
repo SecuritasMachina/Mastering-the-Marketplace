@@ -156,9 +156,9 @@ namespace WebListener
                 sender = client.CreateSender(customerGUID);
                 ServiceBusMessage message = new ServiceBusMessage(jsonPopulated);
                 await sender.SendMessageAsync(message);
-                //sender. .CloseAsync();
+                
                 System.Diagnostics.Trace.TraceInformation("wrote json:" + jsonPopulated + " to "+ customerGUID);
-                //Thread.Sleep(15000);
+               
                 
             }
             catch(Exception ex)

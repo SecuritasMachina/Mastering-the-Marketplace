@@ -61,7 +61,7 @@ stm = @"CREATE TABLE mycache(id TEXT PRIMARY KEY,
             msg TEXT)";
 cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
-stm = @"CREATE TABLE mylog(id TEXT, logTime REAL,
+stm = @"CREATE TABLE mylog(id TEXT, logType TEXT, logTime REAL,
             msg TEXT)";
 cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();

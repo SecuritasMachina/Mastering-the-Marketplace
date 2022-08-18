@@ -19,15 +19,20 @@ namespace BackupCoordinatorV2.Utils
         {
             return con;
         }
-        public void write2Log(string custGuid,string msg)
+        public void write2Log(string custGuid,  string msg)
+        {
+            this.write2Log(custGuid, "INFO", msg);
+        }
+            public void write2Log(string custGuid, string pLogType,string msg)
         {
             DateTime now = DateTime.UtcNow;
             long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
-            string stm = "INSERT INTO mylog(id, logTime,msg) VALUES(@myId, @logTime,@myJson)";
+            string stm = "INSERT INTO mylog(id, logTime,logType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", custGuid);
             cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
+            cmd2.Parameters.AddWithValue("@logType", pLogType);
             cmd2.Parameters.AddWithValue("@myJson", msg);
             cmd2.Prepare();
             cmd2.ExecuteNonQuery();
@@ -73,5 +78,6 @@ namespace BackupCoordinatorV2.Utils
             }
         }
 
+        
     }
 }

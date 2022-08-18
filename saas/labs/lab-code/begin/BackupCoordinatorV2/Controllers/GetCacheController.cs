@@ -16,7 +16,7 @@ namespace BackupCoordinatorV2.Controllers
 
 
         private readonly ILogger<GetCacheController> _logger;
-        
+
         public GetCacheController(ILogger<GetCacheController> logger)
         {
             _logger = logger;
@@ -28,30 +28,44 @@ namespace BackupCoordinatorV2.Controllers
         [Route("/v3/putCache/{itemKey}")]
         public ActionResult<string> PostAsync([FromBody] object value, string itemKey)
         {
-           
-                string json = value.ToString();
+
+            string json = value.ToString();
+            try
+            {
+
+                _logger.LogInformation("/v3/putCache/" + itemKey + " " + json);
                 try
                 {
-
-                    _logger.LogInformation("/v3/putCache/" + itemKey + " " + json);
+                    string stm = "UPDATE mycache set msg= @myJson where id =@myId";
+                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
+                    cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@myJson", json);
+                    cmd2.Prepare();
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception ex) { _logger.LogError(ex.ToString()); }
+                try
+                {
                     string stm = "INSERT INTO mycache(id, msg) VALUES(@myId, @myJson)";
                     SqliteCommand cmd2 = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
                     cmd2.Parameters.AddWithValue("@myId", itemKey);
                     cmd2.Parameters.AddWithValue("@myJson", json);
                     cmd2.Prepare();
                     cmd2.ExecuteNonQuery();
-                    
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.ToString());
-                    throw new Exception(ex.Message);
+                catch (Exception ex) { _logger.LogError(ex.ToString()); }
 
-                }
-                return json;
-            
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                throw new Exception(ex.Message);
+
+            }
+            return json;
+
         }
-        
+
         [HttpGet]
         [Route("/v3/getCache/{itemKey}")]
         public string Get(string itemKey)
@@ -66,25 +80,14 @@ namespace BackupCoordinatorV2.Controllers
                 cmd2.Parameters.AddWithValue("@myId", itemKey);
 
                 cmd2.Prepare();
-
+                genericMessage.msgType = itemKey.Substring(0, itemKey.IndexOf("-"));
+                genericMessage.guid = itemKey;
                 SqliteDataReader myReader = cmd2.ExecuteReader();
                 while (myReader.Read())
                 {
                     json = myReader.GetString(1);
-                    genericMessage.msg = json;
+                    genericMessage = JsonConvert.DeserializeObject<GenericMessage>(json);
                 }
-
-                if(genericMessage==null)
-                {
-                    genericMessage = new GenericMessage();
-                    genericMessage.msgType = "dirListing";
-                    genericMessage.msg = itemKey;
-                }
-                else
-                {
-                    genericMessage.guid = itemKey;
-                }
-
                 json = JsonConvert.SerializeObject(genericMessage);
 
             }

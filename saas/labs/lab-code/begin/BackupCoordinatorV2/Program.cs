@@ -60,49 +60,7 @@ stm = @"CREATE TABLE mycache(id TEXT PRIMARY KEY,
 cmd = new SqliteCommand(stm, DBSIngleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
 
-app.MapGet("/v2/config/{customerGuid}", async delegate (HttpContext context, string customerGuid)
-{
-    app.Logger.LogInformation("looking up " + customerGuid);
-    string json = "";
-    string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
-    try
-    {
-        AgentConfig agentConfig = new AgentConfig();
-        using (SqlConnection connection = new SqlConnection(SQLConnectionString))
-        using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
-        {
-            SqlParameter[] param = new SqlParameter[1];
-            param[0] = new SqlParameter("@customerId", customerGuid);
-            command.Parameters.Add(param[0]);
-            connection.Open();
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-
-                {
-                    agentConfig.passPhrase = reader["passPhrase"].ToString();
-                    agentConfig.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
-                    agentConfig.topicName = "controller";
-
-
-                }
-            }
-        }
-        string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-        return jsonPopulated;
-
-    }
-
-    catch (Exception ex)
-    {
-        throw new Exception(ex.Message);
-
-    }
-    return json;
-
-});
 
 app.MapPost("/v2/recordBackup", async delegate (HttpContext context)
 {

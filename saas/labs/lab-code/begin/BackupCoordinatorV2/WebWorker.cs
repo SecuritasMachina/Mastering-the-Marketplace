@@ -112,7 +112,7 @@ namespace WebListener
 
         internal async Task RequestRestoreAsync(string json)
         {
-            string topicEndPoint = "";
+           
             dynamic stuff = JsonConvert.DeserializeObject(json);
             string? msgType = stuff.msgType;
             string? customerGUID = stuff.customerGUID;
@@ -120,12 +120,8 @@ namespace WebListener
             string? status = stuff.status;
             string? passPhrase = stuff.passPhrase;
             string? errorMsg = stuff.errormsg;
-            OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
-            _OffSiteMessageDTO.customerGUID = customerGUID;
-            _OffSiteMessageDTO.msgType = msgType;
-            _OffSiteMessageDTO.backupName = backupName;
-            _OffSiteMessageDTO.status = status;
-            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+            
+            /*using (SqlConnection connection = new SqlConnection(SQLConnectionString))
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {
                 SqlParameter[] param = new SqlParameter[1];
@@ -145,34 +141,24 @@ namespace WebListener
                     }
                 }
             }
-            string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
-            client = new ServiceBusClient(topicEndPoint);
-            sender = client.CreateSender(customerGUID);
-
-
-
-            // create a batch 
-            using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
-
-
-            // try adding a message to the batch
-            if (!messageBatch.TryAddMessage(new ServiceBusMessage(json)))
-            {
-                // if it is too large for the batch
-                throw new Exception($"The message is too large to fit in the batch.");
-            }
-
-
+            */
+            //string jsonPopulated = JsonConvert.SerializeObject(_OffSiteMessageDTO);
             try
             {
-                // Use the producer client to send the batch of messages to the Service Bus queue
-                await sender.SendMessagesAsync(messageBatch);
-                System.Diagnostics.Trace.TraceInformation("wrote messageBatch");
-                //await sender.CloseAsync();
-                //Console.WriteLine($"A batch of {numOfMessages} messages has been published to the queue.");
+                client = new ServiceBusClient("Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=");
+                sender = client.CreateSender(customerGUID);
+                ServiceBusMessage message = new ServiceBusMessage(json);
+                await sender.SendMessageAsync(message);
+                System.Diagnostics.Trace.TraceInformation("wrote json:" + json+" to "+ customerGUID);
+                Thread.Sleep(5000);
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("ex:" + ex.ToString());
             }
             finally
             {
+                
                 // Calling DisposeAsync on client types is required to ensure that network
                 // resources and other unmanaged objects are properly cleaned up.
                 await sender.DisposeAsync();

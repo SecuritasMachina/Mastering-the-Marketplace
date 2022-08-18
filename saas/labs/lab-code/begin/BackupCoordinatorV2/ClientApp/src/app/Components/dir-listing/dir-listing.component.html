@@ -1,24 +1,26 @@
-<h1 id="tableLabel">OffSite Directory Listing</h1>
+<h1 id="tableLabel">OffSite Directory Listing length:{{dirListingDTO.length}}</h1>
 
 
 
 <p *ngIf="!dirListingDTO"><em>Loading...</em></p>
 
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="forecasts">
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="dirListingDTO">
   <thead>
     <tr>
+      <th>Action</th>
+      <th>FileName</th>
+      <th>Size</th>
       <th>Date</th>
-      <th>Temp. (C)</th>
-      <th>Temp. (F)</th>
-      
+
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let forecast of dirListingDTO">
-      <td>{{ forecast.FileName }}</td>
-      <td>{{ forecast.length }}</td>
-      <td>{{ forecast.date }}</td>
-      
+    <tr *ngFor="let fileDTO of dirListingDTO">
+      <td><a class="pure-button pure-button-primary" (click)='restoreFile(fileDTO.FileName)'>Restore</a></td>
+      <td>{{ fileDTO.FileName }}</td>
+      <td>{{ fileDTO.length }}</td>
+      <td>{{ fileDTO.date }}</td>
+
     </tr>
   </tbody>
 </table>

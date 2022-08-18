@@ -8,18 +8,19 @@ using Newtonsoft.Json;
 using System.Text;
 using WebListener;
 using WebListener.Utils;
-//using System.Data.SqlClient;
+
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-//builder.Services.AddControllers().AddJsonOptions();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("*", "http://localhost:4200", "https://localhost:44424",
-                                              "https://securitasmachinacoordinater.azurewebsites.net/");
+                          policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                          //policy.WithOrigins("*", "http://localhost:4200", "https://localhost:44424",
+                          //                    "https://securitasmachinacoordinater.azurewebsites.net/");
                       });
 });
 // Add services to the container.
@@ -28,7 +29,7 @@ builder.Logging.AddConsole();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
+app.UseCors(MyAllowSpecificOrigins);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

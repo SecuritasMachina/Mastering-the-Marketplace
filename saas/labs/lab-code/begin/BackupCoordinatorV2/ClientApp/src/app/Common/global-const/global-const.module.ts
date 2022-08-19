@@ -10,5 +10,5 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class GlobalConstModule {
-  public static guid: string = "";
+  public static guid: string | null | undefined;
 }

@@ -1,5 +1,6 @@
 ﻿using BackupCoordinatorV2.Utils;
 using Common.DTO.V2;
+using Common.Utils.Comm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
@@ -27,7 +28,6 @@ namespace BackupCoordinatorV2.Controllers
         [Route("/api/v2/config/{customerGuid}")]
         public string Get(string customerGuid)
         {
-            string json = "";
             _logger.LogInformation("looking up " + customerGuid);
 
             string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
@@ -50,12 +50,13 @@ namespace BackupCoordinatorV2.Controllers
                         agentConfig.passPhrase = reader["passPhrase"].ToString();
                         agentConfig.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
                         agentConfig.topicName = "controller";
-
+                       
 
                     }
                 }
             }
             string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
             return jsonPopulated;
 
 

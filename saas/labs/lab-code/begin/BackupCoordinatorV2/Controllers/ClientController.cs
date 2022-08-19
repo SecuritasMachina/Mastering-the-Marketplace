@@ -32,8 +32,7 @@ namespace BackupCoordinatorV2.Controllers
 
                 //System.Diagnostics.Trace.TraceWarning("!! /v2/recordBackup !!");
                 //Post to service bus for particular client
-                await new WebWorker().RecordBackupAsync(value.ToString());
-
+                await new WebWorker().RecordBackupAsync(json: value.ToString());
 
             }
             catch (Exception ex)

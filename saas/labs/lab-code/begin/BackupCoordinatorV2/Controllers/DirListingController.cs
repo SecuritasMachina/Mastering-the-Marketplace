@@ -27,7 +27,7 @@ namespace BackupCoordinatorV2.Controllers
             cmd2.Parameters.AddWithValue("@myId", "dirListing-ab50c41e-3814-4533-8f68-a691b4da9043");
 
             cmd2.Prepare();
-            GenericMessage genericMessage = new GenericMessage();
+            GenericMessage? genericMessage = new GenericMessage();
             SqliteDataReader myReader = cmd2.ExecuteReader();
             while (myReader.Read())
             {

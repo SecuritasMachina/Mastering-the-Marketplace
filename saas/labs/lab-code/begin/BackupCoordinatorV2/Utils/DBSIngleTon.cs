@@ -8,7 +8,7 @@ namespace BackupCoordinatorV2.Utils
     public class DBSingleTon
     {
         private static SqliteConnection con;
-        private static DBSingleTon instance = null;
+        private static DBSingleTon instance;
         private DBSingleTon()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };

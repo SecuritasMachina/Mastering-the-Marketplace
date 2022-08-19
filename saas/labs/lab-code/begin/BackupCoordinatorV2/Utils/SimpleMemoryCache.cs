@@ -6,7 +6,7 @@ namespace WebListener.Utils
     public class SimpleMemoryCache
     {
         // private static MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
-        public static MemoryCache Cache = null;
+        public static MemoryCache? Cache = null;
         public GenericMessage GetOrCreate(object key, GenericMessage pCacheEntry)
         {
             if (Cache == null)

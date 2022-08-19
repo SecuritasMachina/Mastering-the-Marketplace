@@ -9,15 +9,16 @@ namespace WebListener
 {
     public class WebWorker
     {
-        string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
-        string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection"); //"Server=tcp:test-offsite-server.database.windows.net,1433;Initial Catalog=OffSiteBackup;Persist Security Info=False;User ID=appLogon;Password=wSuaA4Q0rtvHqaQ9MRS2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-        // name of your Service Bus queue
-        string queueName = "offsitebackup";
+        string? connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
+        string? SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection"); //"Server=tcp:test-offsite-server.database.windows.net,1433;Initial Catalog=OffSiteBackup;Persist Security Info=False;User ID=appLogon;Password=wSuaA4Q0rtvHqaQ9MRS2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                                                                                                                              // name of your Service Bus queue
+
         // the client that owns the connection and can be used to create senders and receivers
-        ServiceBusClient client;
+
+        private ServiceBusClient? client;
 
         // the sender used to publish messages to the queue
-        ServiceBusSender sender;
+        private ServiceBusSender? sender;
         internal string getConfig(string customerGUID)
         {
             OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
@@ -114,7 +115,7 @@ namespace WebListener
 
         internal async Task RequestRestoreAsync(string? json)
         {
-           
+
             dynamic stuff = JsonConvert.DeserializeObject(json);
             string? msgType = stuff.msgType;
             string? customerGUID = stuff.customerGUID;
@@ -152,24 +153,24 @@ namespace WebListener
             try
             {
                 //string endpoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=defaultSender;SharedAccessKey=vnoGGku4jwmkcYhn/+UNIKngq+CtbJaoZK0uPBMZzk8=;EntityPath=ab50c41e-3814-4533-8f68-a691b4da9043";
-               // endpoint = "https://SecuritasMachinaOffsiteClients.servicebus.windows.net/ab50c41e-3814-4533-8f68-a691b4da9043";
-                string endpoint= "Endpoint = sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
+                // endpoint = "https://SecuritasMachinaOffsiteClients.servicebus.windows.net/ab50c41e-3814-4533-8f68-a691b4da9043";
+                string endpoint = "Endpoint = sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
                 client = new ServiceBusClient(endpoint);
                 sender = client.CreateSender(customerGUID);
                 ServiceBusMessage message = new ServiceBusMessage(jsonPopulated);
                 await sender.SendMessageAsync(message);
-                
-                System.Diagnostics.Trace.TraceInformation("wrote json:" + jsonPopulated + " to "+ customerGUID);
-               
-                
+
+                System.Diagnostics.Trace.TraceInformation("wrote json:" + jsonPopulated + " to " + customerGUID);
+
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Trace.TraceError("ex:" + ex.ToString());
             }
             finally
             {
-                
+
                 // Calling DisposeAsync on client types is required to ensure that network
                 // resources and other unmanaged objects are properly cleaned up.
                 await sender.DisposeAsync();

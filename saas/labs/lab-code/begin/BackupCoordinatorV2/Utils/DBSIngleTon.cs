@@ -19,11 +19,11 @@ namespace BackupCoordinatorV2.Utils
         {
             return con;
         }
-        public void write2Log(string custGuid,  string msg)
+        public void write2Log(string custGuid, string msg)
         {
             this.write2Log(custGuid, "INFO", msg);
         }
-            public void write2Log(string custGuid, string pLogType,string msg)
+        public void write2Log(string custGuid, string pLogType, string msg)
         {
             DateTime now = DateTime.UtcNow;
             long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
@@ -36,7 +36,7 @@ namespace BackupCoordinatorV2.Utils
             cmd2.Parameters.AddWithValue("@myJson", msg);
             cmd2.Prepare();
             cmd2.ExecuteNonQuery();
-            
+
         }
         public List<LogMsgDTO> getLogs(string custGuid)
         {
@@ -47,9 +47,9 @@ namespace BackupCoordinatorV2.Utils
             string stm = "select logTime,msg from mylog where id=@myId order by logTime desc";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", custGuid);
-           
+
             cmd2.Prepare();
-            
+
             using SqliteDataReader rdr = cmd2.ExecuteReader();
 
             while (rdr.Read())
@@ -59,13 +59,13 @@ namespace BackupCoordinatorV2.Utils
                 logMsgDTO.msg = rdr.GetString(1);
                 logMsgDTO.id = custGuid;
                 ret.Add(logMsgDTO);
-               // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
+                // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
             }
             return ret;
 
         }
-        
-       
+
+
         public static DBSingleTon Instance
         {
             get
@@ -78,6 +78,6 @@ namespace BackupCoordinatorV2.Utils
             }
         }
 
-        
+
     }
 }

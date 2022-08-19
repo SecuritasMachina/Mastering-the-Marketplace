@@ -23,13 +23,13 @@
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
               [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+            <a class="nav-link text-dark" [routerLink]="['/',this._guid]">Home</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/dirListing/'+this._guid]">Dir Listing</a>
+            <a class="nav-link text-dark" [routerLink]="['/dirListing/',this._guid]">Dir Listing</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/logListing/'+this._guid]">Logs</a>
+            <a class="nav-link text-dark" [routerLink]="['/logListing/',this._guid]">Logs</a>
           </li>
           <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
     <a class="nav-link text-dark" [routerLink]="['/counter']">Counter</a>

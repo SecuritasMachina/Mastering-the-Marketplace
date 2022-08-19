@@ -32,6 +32,7 @@ import { GlobalConstModule } from './Common/global-const/global-const.module';
     GlobalConstModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: ':guid', component: HomeComponent },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'dirListing/:guid', component: DirListingComponent },

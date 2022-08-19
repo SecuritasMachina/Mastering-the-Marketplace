@@ -44,7 +44,7 @@ namespace BackupCoordinatorV2.Utils
             DateTime now = DateTime.UtcNow;
             long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
-            string stm = "select logTime,msg from mylog where id=@myId order by logTime";
+            string stm = "select logTime,msg from mylog where id=@myId order by logTime desc";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", custGuid);
            
@@ -55,7 +55,7 @@ namespace BackupCoordinatorV2.Utils
             while (rdr.Read())
             {
                 LogMsgDTO logMsgDTO = new LogMsgDTO();
-                logMsgDTO.logTime = rdr.GetInt32(0);
+                logMsgDTO.logTime = rdr.GetInt64(0);
                 logMsgDTO.msg = rdr.GetString(1);
                 logMsgDTO.id = custGuid;
                 ret.Add(logMsgDTO);

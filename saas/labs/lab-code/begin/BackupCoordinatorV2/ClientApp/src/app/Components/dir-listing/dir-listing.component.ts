@@ -17,20 +17,20 @@ export class DirListingComponent implements OnInit {
     'enctype': 'multipart/form-data'
   });
   
-  guid: string | null | undefined;
+  _guid: string | null | undefined;
   _http: HttpClient;
   // const options = new RequestOptions({ headers: this.headers });
 
   constructor(http: HttpClient, private _Activatedroute: ActivatedRoute) {
-    //var guid = 'ab50c41e-3814-4533-8f68-a691b4da9043';
+   
     this._http = http;
     console.info('environment.appServerURL', environment.appServerURL);
     
   }
 
   ngOnInit(): void {
-    this.guid = this._Activatedroute.snapshot.paramMap.get("guid");
-    this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this.guid).subscribe(result => {
+    this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
+    this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this._guid).subscribe(result => {
       //console.info('result', result);
       this.genericMsg.msg = result.msg;
       this.genericMsg.guid = result.guid;
@@ -49,7 +49,7 @@ export class DirListingComponent implements OnInit {
       console.info(' this.dirListingDTO', this.dirListingDTO);
       // console.info(' this.dirListingDTO length', this.dirListingDTO.length);
     }, (error: any) => console.error(error));
-    console.log("this.id", this.guid);
+    console.log("this.id", this._guid);
   }
   async restoreFile(pRestoreFileName: string): Promise<void> {
     console.info(' pRestoreFileName', pRestoreFileName);
@@ -58,7 +58,7 @@ export class DirListingComponent implements OnInit {
       method: 'POST',
       body: JSON.stringify({
         backupName: pRestoreFileName,
-        customerGUID: NavMenuComponent.guid,
+        customerGUID: this._guid,
       }),
       headers: {
         'Content-Type': 'application/json',

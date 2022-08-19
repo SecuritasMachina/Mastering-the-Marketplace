@@ -120,6 +120,15 @@ namespace BackupCoordinatorV2.Controllers
             DBSingleTon.Instance.write2Log(customerGuid, messageType, value.ToString());
             return "Log written";
         }
+        [HttpPost]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes("application/json")]
+        [Route("/api/v3/putLog/{customerGuid}")]
+        public ActionResult<string> putLog([FromBody] object value, string customerGuid)
+        {
+            DBSingleTon.Instance.write2Log(customerGuid, "TRACE", value.ToString());
+            return "Log written";
+        }
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
 

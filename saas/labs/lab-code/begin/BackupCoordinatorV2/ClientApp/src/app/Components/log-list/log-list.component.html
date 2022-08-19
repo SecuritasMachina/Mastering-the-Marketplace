@@ -1,1 +1,29 @@
-<p>log-list works!</p>
+<h1 id="tableLabel">OffSite Log Listing length:{{_logMsg.length}}</h1>
+
+
+
+<p *ngIf="!_logMsg"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="_logMsg">
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Time</th>
+      <th>Msg</th>
+      <th>Msg Length</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let fileDTO of _logMsg">
+      <td></td>
+      <!--<td><a class="pure-button pure-button-primary" (click)='view(fileDTO.logTime)'>View</a></td>-->
+      <!--<td>{{  new Date(fileDTO.logTime).toLocaleString() }}</td>-->
+      <td>{{ fileDTO.logTime | date:'medium' }}  </td>
+      <td>{{ fileDTO.msg }}</td>
+      <td>{{ fileDTO.msg.length }}</td>
+
+
+    </tr>
+  </tbody>
+</table>

@@ -26,10 +26,10 @@
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/dirListing/{NavMenuComponent.guid}']">Dir Listing</a>
+            <a class="nav-link text-dark" [routerLink]="['/dirListing/'+this._guid]">Dir Listing</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/logListing/{NavMenuComponent.guid}']">Logs</a>
+            <a class="nav-link text-dark" [routerLink]="['/logListing/'+this._guid]">Logs</a>
           </li>
           <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
     <a class="nav-link text-dark" [routerLink]="['/counter']">Counter</a>

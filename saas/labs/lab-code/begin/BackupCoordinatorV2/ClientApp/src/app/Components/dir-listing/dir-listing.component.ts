@@ -17,7 +17,7 @@ export class DirListingComponent implements OnInit {
     'enctype': 'multipart/form-data'
   });
   
-  id: string | null | undefined;
+  guid: string | null | undefined;
   _http: HttpClient;
   // const options = new RequestOptions({ headers: this.headers });
 
@@ -29,9 +29,9 @@ export class DirListingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.id = this._Activatedroute.snapshot.paramMap.get("id");
-    this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this.id).subscribe(result => {
-      console.info('result', result);
+    this.guid = this._Activatedroute.snapshot.paramMap.get("guid");
+    this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this.guid).subscribe(result => {
+      //console.info('result', result);
       this.genericMsg.msg = result.msg;
       this.genericMsg.guid = result.guid;
       //this.guid = result.guid;
@@ -49,7 +49,7 @@ export class DirListingComponent implements OnInit {
       console.info(' this.dirListingDTO', this.dirListingDTO);
       // console.info(' this.dirListingDTO length', this.dirListingDTO.length);
     }, (error: any) => console.error(error));
-    console.log("this.id",this.id);
+    console.log("this.id", this.guid);
   }
   async restoreFile(pRestoreFileName: string): Promise<void> {
     console.info(' pRestoreFileName', pRestoreFileName);

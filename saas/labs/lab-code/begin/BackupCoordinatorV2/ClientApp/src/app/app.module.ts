@@ -11,6 +11,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { DirListingComponent } from './Components/dir-listing/dir-listing.component';
 import { LogListComponent } from './Components/log-list/log-list.component';
+import { GlobalConstModule } from './Common/global-const/global-const.module';
 
 @NgModule({
   declarations: [
@@ -21,18 +22,20 @@ import { LogListComponent } from './Components/log-list/log-list.component';
     FetchDataComponent,
     DirListingComponent,
     LogListComponent
+    
   ],
   imports: [
     CommonModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    GlobalConstModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'dirListing/:id', component: DirListingComponent },
-      { path: 'logListing/:id', component: LogListComponent },
+      { path: 'dirListing/:guid', component: DirListingComponent },
+      { path: 'logListing/:guid', component: LogListComponent },
     ])
   ],
   providers: [],

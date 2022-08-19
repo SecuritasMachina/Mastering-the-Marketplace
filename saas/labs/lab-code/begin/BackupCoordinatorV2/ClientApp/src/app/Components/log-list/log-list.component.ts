@@ -19,7 +19,7 @@ export class LogListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._guid = this._Activatedroute.snapshot.paramMap.get("id");
+    this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
     this._http.get<LogMsg>(environment.appServerURL + '/api/v3/getLogs/' + this._guid).subscribe(result => {
       console.info('result', result);
       this.logMsg.msg = result.msg;

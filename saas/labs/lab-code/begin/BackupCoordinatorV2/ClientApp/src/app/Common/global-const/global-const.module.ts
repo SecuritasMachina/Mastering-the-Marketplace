@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Injectable, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 
@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
     CommonModule
   ]
 })
+
 export class GlobalConstModule {
+  //@Injectable({ providedIn: 'app' })
   public static guid: string | null | undefined;
 }

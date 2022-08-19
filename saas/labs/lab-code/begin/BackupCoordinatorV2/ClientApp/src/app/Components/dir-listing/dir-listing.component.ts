@@ -22,8 +22,10 @@ export class DirListingComponent implements OnInit {
 
   public _guid: string | null | undefined;
   _http: HttpClient;
-  private intervalID: any;
-    public restoreInProgress: boolean | undefined;
+  
+  private timerCount = 0;
+  private tmp: any = [];
+  //public restoreInProgress: boolean | undefined;
   // const options = new RequestOptions({ headers: this.headers });
 
   constructor(http: HttpClient, private _Activatedroute: ActivatedRoute, private toastr: ToastrService) {
@@ -50,6 +52,7 @@ export class DirListingComponent implements OnInit {
         fileDTO.FileName = obj.FileName;
         fileDTO.length = obj.length;
         fileDTO.FileDate = obj.FileDate;
+        fileDTO.disabled = false;
         this.dirListingDTO.push(fileDTO);
 
       });
@@ -59,29 +62,46 @@ export class DirListingComponent implements OnInit {
     }, (error: any) => console.error(error));
 
   }
-  async CheckBackupStatus(pRestoreFileName: string) {
+  async CheckBackupStatus(pRestoreFileName: string, pTimerCount: number) {
     var pGuid = this._guid;
     //throw new Error('Function not implemented.');
     console.info(' pRestoreFileName', pRestoreFileName);
     //this.httpCall("POST", pRestoreFileName)
-    this._http.get<GenericMsg>(environment.appServerURL + "/api/v3/getCache/" + pRestoreFileName + "-BACKUPFINISHED-" + pGuid).subscribe(result => {
-      console.log("response:", result);
-      //console.log("response.msg:", result.msg);
-      clearTimeout(this.intervalID);
-      this.toastr.success(pRestoreFileName + ' restored','Restore Status');
-      this.restoreInProgress = false;
+    this._http.get<GenericMsg>(environment.appServerURL + "/api/v3/getCache/" + encodeURIComponent(pRestoreFileName + "-restoreComplete-" + pGuid)).subscribe(result => {
+      console.log("getCache response:", result);
+      //result.
+      //console.log("getCache this.tmp[pTimerCount]:", this.tmp[pTimerCount], pTimerCount);
+      clearInterval(this.tmp[pTimerCount]);
+      //clearTimeout(this.tmp[pTimerCount]);
+      //this.tmp[pTimerCount] = null;
+      
+      
+      this.dirListingDTO.forEach((obj: DirListingDTO, index: any) => {
+        if (pRestoreFileName == obj.FileName || encodeURI(pRestoreFileName) == encodeURIComponent(obj.FileName)) {
+          obj.disabled = false;
+        }
+      });
+      this.toastr.success(pRestoreFileName + ' restored', 'Restore Status');
+      this._http.get<string>(environment.appServerURL + "/api/v3/deleteCache/" + encodeURIComponent(pRestoreFileName + "-restoreComplete-" + pGuid)).subscribe(result => {
+        console.log("deleteCache response:", result);
+      });
+      return false;
+    }, error => {
+      if (error.status != 404)
+        console.log("error response:", error);
     });
 
-    
+    return true;
   }
-  async restoreFile(pRestoreFileName: string): Promise<void> {
-    console.info(' pRestoreFileName', pRestoreFileName);
-    this.restoreInProgress = true;
-    //this.httpCall("POST", pRestoreFileName)
+  async restoreFile(pItem: DirListingDTO): Promise<void> {
+    console.info('restoreFile.pRestoreFileName', pItem.FileName);
+
+    //pItem.disabled = true;
+
     const response = await fetch(environment.appServerURL + "/api/v2/requestRestore/" + this._guid, {
       method: 'POST',
       body: JSON.stringify({
-        backupName: pRestoreFileName,
+        backupName: pItem.FileName,
         customerGUID: this._guid,
       }),
       headers: {
@@ -89,13 +109,14 @@ export class DirListingComponent implements OnInit {
         Accept: 'application/json',
       },
     });
-    this.toastr.success(pRestoreFileName + ' submitted for restored', 'Restore Status');
+    this.toastr.success(pItem.FileName + ' submitted for restoration', 'Restore Status');
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
-    let guid = this._guid;
-     this.intervalID = setInterval(() => {
-      this.CheckBackupStatus(pRestoreFileName);
+    this.timerCount++;
+    var timedID:number = this.timerCount;
+    this.tmp[timedID] = setInterval(() => {
+      this.CheckBackupStatus(pItem.FileName, timedID);
     }, 10 * 1000);
   }
 }
@@ -114,6 +135,7 @@ interface DirListingDTO {
   length: number;
   date: string;
   FileDate: number;
+  disabled: boolean;
 }
 
 

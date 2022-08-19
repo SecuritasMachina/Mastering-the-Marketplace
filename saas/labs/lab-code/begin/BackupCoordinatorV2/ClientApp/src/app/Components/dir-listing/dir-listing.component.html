@@ -15,11 +15,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let fileDTO of dirListingDTO">
-      <td *ngIf="!restoreInProgress"><a class="pure-button pure-button-primary" (click)='restoreFile(fileDTO.FileName)'>Restore</a></td>
-      <td>{{ fileDTO.FileName }}</td>
-      <td>{{ fileDTO.length }}</td>
-      <td>{{ fileDTO.FileDate | date:'medium' }}</td>
+    <tr *ngFor="let item of dirListingDTO">
+      <td><button [disabled]="item.disabled" class="pure-button pure-button-primary" (click)='item.disabled=true;restoreFile(item)'>Restore</button></td>
+      <td>{{ item.FileName }}</td>
+      <td>{{ item.length | number }}</td>
+      <td>{{ item.FileDate | date:'medium' }}</td>
 
     </tr>
   </tbody>

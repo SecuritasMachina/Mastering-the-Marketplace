@@ -3,6 +3,7 @@ using Common.DTO.V2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using System.Net;
 using System.Net.Mime;
 using WebListener;
 
@@ -68,14 +69,27 @@ namespace BackupCoordinatorV2.Controllers
         }
 
 
+        [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/deleteCache/{itemKey}")]
+        public ActionResult<string> deleteCache(string itemKey)
+        {
+            string stm = "delete from mycache where id =@myId";
+            SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+            cmd2.Parameters.AddWithValue("@myId", itemKey);
+
+            cmd2.Prepare();
+            cmd2.ExecuteNonQuery();
+            return JsonConvert.SerializeObject($"Deleted {itemKey}");
+        }
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
         [Route("/api/v3/putCache/{itemKey}")]
-        public ActionResult<string> PutCache([FromBody] object value, string itemKey)
+        public ActionResult<string> PutCache([FromBody] object pFormBody, string itemKey)
         {
 
-            string json = value.ToString();
+            string json = pFormBody.ToString();
             try
             {
 
@@ -84,22 +98,29 @@ namespace BackupCoordinatorV2.Controllers
                 {
                     string stm = "UPDATE mycache set msg= @myJson where id =@myId";
                     SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                    cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
                     cmd2.Parameters.AddWithValue("@myJson", json);
                     cmd2.Prepare();
                     cmd2.ExecuteNonQuery();
                 }
-                catch (Exception ex) { _logger.LogError(ex.ToString()); }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                }
                 try
                 {
                     string stm = "INSERT INTO mycache(id, msg) VALUES(@myId, @myJson)";
                     SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                    cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
                     cmd2.Parameters.AddWithValue("@myJson", json);
                     cmd2.Prepare();
                     cmd2.ExecuteNonQuery();
                 }
-                catch (Exception ex) { _logger.LogError(ex.ToString()); }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.ToLower().Contains("unique"))
+                        _logger.LogError(ex.ToString());
+                }
 
             }
             catch (Exception ex)
@@ -115,7 +136,7 @@ namespace BackupCoordinatorV2.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
         [Route("/api/v3/putLog/{customerGuid}/{messageType}")]
-        public ActionResult<string> putLog([FromBody] object value, string customerGuid,string messageType)
+        public ActionResult<string> putLog([FromBody] object value, string customerGuid, string messageType)
         {
             DBSingleTon.Instance.write2Log(customerGuid, messageType, value.ToString());
             return "Log written";
@@ -140,7 +161,7 @@ namespace BackupCoordinatorV2.Controllers
         }
         [HttpGet]
         [Route("/api/v3/getCache/{itemKey}")]
-        public string getCache(string itemKey)
+        public ActionResult<string> getCache(string itemKey)
         {
             string json = "";
             try
@@ -149,16 +170,23 @@ namespace BackupCoordinatorV2.Controllers
 
                 string stm = "select id,msg from mycache where id=@myId";
                 SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                cmd2.Parameters.AddWithValue("@myId", itemKey);
+                cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
 
                 cmd2.Prepare();
                 genericMessage.msgType = itemKey.Substring(0, itemKey.IndexOf("-"));
                 genericMessage.guid = itemKey;
                 SqliteDataReader myReader = cmd2.ExecuteReader();
+                bool gotRead = false;
                 while (myReader.Read())
                 {
+                    gotRead = true;
                     json = myReader.GetString(1);
                     genericMessage = JsonConvert.DeserializeObject<GenericMessage>(json);
+                }
+
+                if (!gotRead)
+                {
+                    return NotFound();
                 }
                 json = JsonConvert.SerializeObject(genericMessage);
 

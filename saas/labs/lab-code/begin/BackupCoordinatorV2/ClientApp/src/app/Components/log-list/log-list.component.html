@@ -20,7 +20,7 @@
       <!--<td><a class="pure-button pure-button-primary" (click)='view(fileDTO.logTime)'>View</a></td>-->
       <!--<td>{{  new Date(fileDTO.logTime).toLocaleString() }}</td>-->
       <td>{{ fileDTO.logTime | date:'medium' }}  </td>
-      <td>{{ fileDTO.msg }}</td>
+      <td><input type="text" class="form-control" placeholder="" value="{{ fileDTO.msg }}" /></td>
       <td>{{ fileDTO.msg.length }}</td>
 
 

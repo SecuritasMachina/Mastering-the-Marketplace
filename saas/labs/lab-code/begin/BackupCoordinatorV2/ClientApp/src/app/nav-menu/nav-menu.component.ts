@@ -17,15 +17,18 @@ export class NavMenuComponent {
   }
   constructor(private router: Router, private globalConstModule: GlobalConstModule, private _Activatedroute: ActivatedRoute) {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
-    console.info("this._guid", this._guid);
+    console.info("NavMenuComponent this._guid", this._guid);
+    console.info("NavMenuComponent GlobalConstModule.guid1", GlobalConstModule.guid);
 
     if (this._guid == null) {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       GlobalConstModule.guid = urlParams.get('guid')
       if (GlobalConstModule.guid != null) {
-        this.router.navigate(['/dirListing/' + GlobalConstModule.guid]);
+        console.info("NavMenuComponent GlobalConstModule.guid2", GlobalConstModule.guid);
         this._guid = GlobalConstModule.guid;
+        this.router.navigate(['/dirListing/', GlobalConstModule.guid]);
+       
       }
       else {
         GlobalConstModule.guid = this._guid;

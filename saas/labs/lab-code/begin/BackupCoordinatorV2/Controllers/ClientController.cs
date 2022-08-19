@@ -46,8 +46,8 @@ namespace BackupCoordinatorV2.Controllers
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
-        [Route("/api/v2/requestRestore/{itemKey}")]
-        public async Task<ActionResult<string>> RequestRestoreAsync([FromBody] object value, string itemKey)
+        [Route("/api/v2/requestRestore/{customerGuid}")]
+        public async Task<ActionResult<string>> RequestRestoreAsync([FromBody] object value, string customerGuid)
         {
 
             try

@@ -12,7 +12,8 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { DirListingComponent } from './Components/dir-listing/dir-listing.component';
 import { LogListComponent } from './Components/log-list/log-list.component';
 import { GlobalConstModule } from './Common/global-const/global-const.module';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +31,7 @@ import { GlobalConstModule } from './Common/global-const/global-const.module';
     HttpClientModule,
     FormsModule,
     GlobalConstModule,
+    BrowserAnimationsModule, ToastrModule.forRoot(),
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: ':guid', component: HomeComponent },

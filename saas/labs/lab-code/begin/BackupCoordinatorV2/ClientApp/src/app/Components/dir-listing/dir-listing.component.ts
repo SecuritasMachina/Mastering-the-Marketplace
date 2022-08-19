@@ -2,7 +2,10 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ActivatedRoute } from '@angular/router'
-import { NavMenuComponent } from '../../nav-menu/nav-menu.component';
+import { GlobalConstModule } from '../../Common/global-const/global-const.module';
+import { NotificationService } from '../../Services/notification.service';
+//import { NavMenuComponent } from '../../nav-menu/nav-menu.component';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-dir-listing',
   templateUrl: './dir-listing.component.html',
@@ -16,45 +19,66 @@ export class DirListingComponent implements OnInit {
     'Accept': 'application/json',
     'enctype': 'multipart/form-data'
   });
-  
-  _guid: string | null | undefined;
+
+  public _guid: string | null | undefined;
   _http: HttpClient;
+  private intervalID: any;
+    public restoreInProgress: boolean | undefined;
   // const options = new RequestOptions({ headers: this.headers });
 
-  constructor(http: HttpClient, private _Activatedroute: ActivatedRoute) {
-   
+  constructor(http: HttpClient, private _Activatedroute: ActivatedRoute, private toastr: ToastrService) {
+
     this._http = http;
     console.info('environment.appServerURL', environment.appServerURL);
-    
+
   }
 
   ngOnInit(): void {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
+    console.info("DirListingComponent GlobalConstModule.guid1", GlobalConstModule.guid);
+    console.log("this._guid", this._guid);
     this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this._guid).subscribe(result => {
-      //console.info('result', result);
+
       this.genericMsg.msg = result.msg;
       this.genericMsg.guid = result.guid;
-      //this.guid = result.guid;
+
 
       var tmp1 = JSON.parse(this.genericMsg.msg);
       tmp1.fileDTOs.forEach((obj: any, index: any) => {
-        // console.log('before transform, this : ' + this);
+
         var fileDTO = {} as DirListingDTO;
         fileDTO.FileName = obj.FileName;
         fileDTO.length = obj.length;
+        fileDTO.FileDate = obj.FileDate;
         this.dirListingDTO.push(fileDTO);
 
       });
-      //this.dirListingDTO = Object.assign({}, tmp1.fileDTOs); 
+
       console.info(' this.dirListingDTO', this.dirListingDTO);
-      // console.info(' this.dirListingDTO length', this.dirListingDTO.length);
+
     }, (error: any) => console.error(error));
-    console.log("this.id", this._guid);
+
+  }
+  async CheckBackupStatus(pRestoreFileName: string) {
+    var pGuid = this._guid;
+    //throw new Error('Function not implemented.');
+    console.info(' pRestoreFileName', pRestoreFileName);
+    //this.httpCall("POST", pRestoreFileName)
+    this._http.get<GenericMsg>(environment.appServerURL + "/api/v3/getCache/" + pRestoreFileName + "-BACKUPFINISHED-" + pGuid).subscribe(result => {
+      console.log("response:", result);
+      //console.log("response.msg:", result.msg);
+      clearTimeout(this.intervalID);
+      this.toastr.success(pRestoreFileName + ' restored','Restore Status');
+      this.restoreInProgress = false;
+    });
+
+    
   }
   async restoreFile(pRestoreFileName: string): Promise<void> {
     console.info(' pRestoreFileName', pRestoreFileName);
+    this.restoreInProgress = true;
     //this.httpCall("POST", pRestoreFileName)
-    const response = await fetch(environment.appServerURL + "/api/v2/requestRestore", {
+    const response = await fetch(environment.appServerURL + "/api/v2/requestRestore/" + this._guid, {
       method: 'POST',
       body: JSON.stringify({
         backupName: pRestoreFileName,
@@ -65,10 +89,14 @@ export class DirListingComponent implements OnInit {
         Accept: 'application/json',
       },
     });
-
+    this.toastr.success(pRestoreFileName + ' submitted for restored', 'Restore Status');
     if (!response.ok) {
       throw new Error(`Error! status: ${response.status}`);
     }
+    let guid = this._guid;
+     this.intervalID = setInterval(() => {
+      this.CheckBackupStatus(pRestoreFileName);
+    }, 10 * 1000);
   }
 }
 type GenericMsg2 = {
@@ -87,3 +115,5 @@ interface DirListingDTO {
   date: string;
   FileDate: number;
 }
+
+

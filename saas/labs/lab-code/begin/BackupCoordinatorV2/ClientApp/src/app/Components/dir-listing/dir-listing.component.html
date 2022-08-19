@@ -16,7 +16,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let fileDTO of dirListingDTO">
-      <td><a class="pure-button pure-button-primary" (click)='restoreFile(fileDTO.FileName)'>Restore</a></td>
+      <td *ngIf="!restoreInProgress"><a class="pure-button pure-button-primary" (click)='restoreFile(fileDTO.FileName)'>Restore</a></td>
       <td>{{ fileDTO.FileName }}</td>
       <td>{{ fileDTO.length }}</td>
       <td>{{ fileDTO.FileDate | date:'medium' }}</td>

@@ -17,6 +17,8 @@ export class NavMenuComponent {
   }
   constructor(private router: Router, private globalConstModule: GlobalConstModule, private _Activatedroute: ActivatedRoute) {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
+    console.info("this._guid", this._guid);
+
     if (this._guid == null) {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);

@@ -67,8 +67,4 @@ cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
 
 
-
-
-
-
 app.Run();

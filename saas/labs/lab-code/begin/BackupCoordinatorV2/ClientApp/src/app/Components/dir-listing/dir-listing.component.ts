@@ -85,4 +85,5 @@ interface DirListingDTO {
   FileName: string;
   length: number;
   date: string;
+  FileDate: number;
 }

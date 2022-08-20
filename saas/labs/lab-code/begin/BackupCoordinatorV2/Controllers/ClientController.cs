@@ -3,6 +3,7 @@ using Common.DTO.V2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mime;
 using WebListener;
@@ -130,6 +131,59 @@ namespace BackupCoordinatorV2.Controllers
 
             }
             return json;
+
+        }
+        [HttpGet]
+
+        [Route("/apt/v1/testMyHealth")]
+        public ActionResult<string> checkHealth()
+        {
+
+            //string json = pFormBody.ToString();
+            try
+            {
+
+                _logger.LogInformation("/apt/v1/testMyHealth");
+                try
+                {
+                    //_logger.LogInformation("looking up " + customerGuid);
+
+                    string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+                    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+
+
+
+                    string sql = "select * from backupHistory where customerGUID='1'";
+                    using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+
+                        connection.Open();
+                        long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+                        command.Prepare();
+                        command.ExecuteReader();// .BeginExecuteNonQuery();
+
+                    }
+                    // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+                    //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                throw new Exception(ex.Message);
+
+            }
+            return Ok();
 
         }
         [HttpPost]

@@ -26,7 +26,10 @@
             <a class="nav-link text-dark" [routerLink]="['/',this._guid]">Home</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/dirListing/',this._guid]">Dir Listing</a>
+            <a class="nav-link text-dark" [routerLink]="['/backupHistory/',this._guid]">Backup History</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/dirListing/',this._guid]">Restorable Listing</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/logListing/',this._guid]">Logs</a>

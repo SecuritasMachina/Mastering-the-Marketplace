@@ -25,8 +25,8 @@ namespace BackupCoordinatorV2.Utils
         }
         public void write2Log(string custGuid, string pLogType, string msg)
         {
-            DateTime now = DateTime.UtcNow;
-            long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+           
+            long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
             string stm = "INSERT INTO mylog(id, logTime,logType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());

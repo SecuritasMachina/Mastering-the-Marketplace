@@ -128,27 +128,7 @@ namespace WebListener
             genericMessage.msg = json;
             genericMessage.guid = customerGUID;
             DBSingleTon.Instance.write2Log(customerGUID, $"Requested {backupName} to be restored");
-            /*using (SqlConnection connection = new SqlConnection(SQLConnectionString))
-            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
-            {
-                SqlParameter[] param = new SqlParameter[1];
-                param[0] = new SqlParameter("@customerId", customerGUID);
-                command.Parameters.Add(param[0]);
-                connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        _OffSiteMessageDTO.azureBlobEndpoint = reader["azureBlobEndpoint"].ToString();
-                        _OffSiteMessageDTO.BlobContainerName = reader["azureContainerName"].ToString();
-                        _OffSiteMessageDTO.passPhrase = reader["passPhrase"].ToString();
-                        _OffSiteMessageDTO.RetentionDays = reader.GetInt16(reader.GetOrdinal("retentionDays"));
-                        topicEndPoint = reader["topicEndPoint"].ToString();
-
-                    }
-                }
-            }
-            */
+            
             string jsonPopulated = JsonConvert.SerializeObject(genericMessage);
             try
             {

@@ -2,11 +2,16 @@
 using Common.DTO.V2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using System.Collections;
+using System.Collections.Generic;
+
 using Newtonsoft.Json;
-using System.Data.SqlClient;
+using System.Data;
+
 using System.Net;
 using System.Net.Mime;
 using WebListener;
+using Microsoft.Data.SqlClient;
 
 namespace BackupCoordinatorV2.Controllers
 {
@@ -133,8 +138,101 @@ namespace BackupCoordinatorV2.Controllers
             return json;
 
         }
-        [HttpGet]
+        [HttpPost]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes("application/json")]
+        [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}")]
+        public ActionResult<string> postBackupHistory([FromBody] object pFormBody, string itemKey, string backupFileName)
+        {
 
+            string json = pFormBody.ToString();
+            _logger.LogInformation("/apt/v1/postBackupHistory");
+            try
+            {
+                //_logger.LogInformation("looking up " + customerGuid);
+
+                //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+                string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+
+
+
+                string sql = "insert into backupHistory([timeStamp2],[customerGUID],[backupFile]) values(@timeStamp,@customerGUID,@backupFile)";
+                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                    command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = timeStamp;
+                    command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
+                    command.Parameters.Add("@backupFile", SqlDbType.VarChar).Value = backupFileName;
+                    //command.Prepare();
+                    command.BeginExecuteNonQuery();
+
+                }
+                // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+                //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
+            return Ok();
+
+        }
+
+        [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/BackupHistory/{itemKey}")]
+        public ActionResult<List<BackupHistoryDTO>> getBackupHistory(string itemKey)
+        {
+            List<BackupHistoryDTO> ret = new List<BackupHistoryDTO>();
+            //string json = pFormBody.ToString();
+            _logger.LogInformation("/apt/v3/BackupHistory");
+            try
+            {
+                //_logger.LogInformation("looking up " + customerGuid);
+
+                //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+                string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+
+
+
+                string sql = "select timeStamp2,backupFile from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
+                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                   
+                    command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
+                    using SqlDataReader rdr = command.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        BackupHistoryDTO logMsgDTO = new BackupHistoryDTO();
+                        logMsgDTO.timeStamp = rdr.GetInt64(0);
+                        logMsgDTO.backupFile = rdr.GetString(1);
+                        
+                        ret.Add(logMsgDTO);
+                        // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
+                    }
+                    return Ok(ret);
+
+                }
+                // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+                //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+                return Ok(ret);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
+            return Ok();
+
+        }
+
+        [HttpGet]
         [Route("/apt/v1/testMyHealth")]
         public ActionResult<string> checkHealth()
         {
@@ -159,7 +257,7 @@ namespace BackupCoordinatorV2.Controllers
                     {
 
                         connection.Open();
-                        long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
 
                         command.Prepare();
                         command.ExecuteReader();// .BeginExecuteNonQuery();

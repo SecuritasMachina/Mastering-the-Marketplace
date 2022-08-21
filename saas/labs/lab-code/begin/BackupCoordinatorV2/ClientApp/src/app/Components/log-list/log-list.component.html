@@ -7,7 +7,7 @@
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="_logMsg">
   <thead>
     <tr>
-      <th>Action</th>
+      <th>Type</th>
       <th>Time</th>
       <th>Msg</th>
       <th>Msg Length</th>
@@ -16,7 +16,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let fileDTO of _logMsg">
-      <td></td>
+      <td>{{ fileDTO.logType}}</td>
       <!--<td><a class="pure-button pure-button-primary" (click)='view(fileDTO.logTime)'>View</a></td>-->
       <!--<td>{{  new Date(fileDTO.logTime).toLocaleString() }}</td>-->
       <td>{{ fileDTO.logTime | date:'medium' }}  </td>

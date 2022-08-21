@@ -30,7 +30,7 @@ namespace BackupCoordinatorV2.Controllers
         {
             _logger.LogInformation("looking up " + customerGuid);
 
-            string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+           // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
             string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
@@ -56,7 +56,7 @@ namespace BackupCoordinatorV2.Controllers
                 }
             }
             string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " +jsonPopulated.Length);
             return jsonPopulated;
 
 

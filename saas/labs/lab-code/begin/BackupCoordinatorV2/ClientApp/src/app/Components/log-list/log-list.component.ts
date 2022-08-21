@@ -71,4 +71,5 @@ interface LogMsg {
   logTime: string;
   msg: string;
   id: string;
+  logType: string;
 }

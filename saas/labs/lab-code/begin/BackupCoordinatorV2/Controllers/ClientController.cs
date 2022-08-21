@@ -157,12 +157,12 @@ namespace BackupCoordinatorV2.Controllers
                 //_logger.LogInformation("looking up " + customerGuid);
 
                 //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-            //    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+                //    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
 
                 string sql = "insert into backupHistory([timeStamp2],[customerGUID],[backupFile],[newFileName],[fileLength]) values(@timeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
-                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -193,14 +193,14 @@ namespace BackupCoordinatorV2.Controllers
         }
 
         private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
-        private static string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+        private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/provisionUser/{customerGUID}")]
         public async Task<ActionResult> provisionUserAsync(string customerGUID)
         {
-            
+
 
             try
             {
@@ -209,7 +209,7 @@ namespace BackupCoordinatorV2.Controllers
      VALUES
            (@customerID,'Your Name')";
 
-                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -229,17 +229,13 @@ namespace BackupCoordinatorV2.Controllers
                 //return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
             }
 
-           // _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-            //var client = new ManagementClient(_connectionString);
-            //ServiceBusClient client = new ServiceBusClient(_connectionString);
+
             try
             {
-                ServiceBusAdministrationClient client = new ServiceBusAdministrationClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", new DefaultAzureCredential());
+                ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(_connectionString);
                 string subscriptionsName = "client";
-                if (!await client.SubscriptionExistsAsync(customerGUID, subscriptionsName))
-                {
-                    await client.CreateSubscriptionAsync(customerGUID, subscriptionsName);
-                }
+
+                await client.CreateSubscriptionAsync(customerGUID, subscriptionsName);
             }
             catch (Exception ex)
             {
@@ -263,11 +259,11 @@ namespace BackupCoordinatorV2.Controllers
                 //_logger.LogInformation("looking up " + customerGuid);
 
                 //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                
+
 
 
                 string sql = "select timeStamp2,backupFile,newFileName,fileLength from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
-                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -318,13 +314,13 @@ namespace BackupCoordinatorV2.Controllers
                 {
                     //_logger.LogInformation("looking up " + customerGuid);
 
-                   // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+                    // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
                     //string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
 
                     string sql = "select * from backupHistory where customerGUID='ab5fc41e-3814-4533-8f68-a691b4da9043";
-                    using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                    using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
 
@@ -381,7 +377,7 @@ namespace BackupCoordinatorV2.Controllers
         [Route("/api/v3/getLogs/{customerGuid}")]
         public ActionResult<List<LogMsgDTO>> GetLogAsync(string customerGuid)
         {
-            return DBSingleTon.Instance.getLogs(customerGuid);
+            return Ok(DBSingleTon.Instance.getLogs(customerGuid));
 
         }
         [HttpGet]

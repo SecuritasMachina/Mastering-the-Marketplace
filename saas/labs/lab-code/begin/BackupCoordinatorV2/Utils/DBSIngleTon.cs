@@ -25,7 +25,7 @@ namespace BackupCoordinatorV2.Utils
         }
         public void write2Log(string custGuid, string pLogType, string msg)
         {
-           
+
             long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
             string stm = "INSERT INTO mylog(id, logTime,logType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
@@ -44,7 +44,7 @@ namespace BackupCoordinatorV2.Utils
             DateTime now = DateTime.UtcNow;
             long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
-            string stm = "select logTime,msg from mylog where id=@myId order by logTime desc";
+            string stm = "select logTime,msg,logType from mylog where id=@myId order by logTime desc";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", custGuid);
 
@@ -56,7 +56,11 @@ namespace BackupCoordinatorV2.Utils
             {
                 LogMsgDTO logMsgDTO = new LogMsgDTO();
                 logMsgDTO.logTime = rdr.GetInt64(0);
-                logMsgDTO.msg = rdr.GetString(1);
+                if (!rdr.IsDBNull(1))
+                    logMsgDTO.msg = rdr.GetString(1);
+                if (!rdr.IsDBNull(2))
+                    logMsgDTO.logType = rdr.GetString(2);
+
                 logMsgDTO.id = custGuid;
                 ret.Add(logMsgDTO);
                 // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");

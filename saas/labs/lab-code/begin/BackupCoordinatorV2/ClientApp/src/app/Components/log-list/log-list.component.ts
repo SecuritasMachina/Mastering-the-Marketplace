@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ActivatedRoute } from '@angular/router'
@@ -8,11 +8,12 @@ import { ActivatedRoute } from '@angular/router'
   templateUrl: './log-list.component.html',
   styleUrls: ['./log-list.component.css']
 })
-export class LogListComponent implements OnInit {
+export class LogListComponent implements OnInit, OnDestroy {
   _http: HttpClient;
   public logMsg = {} as LogMsg;
   public _logMsg: LogMsg[] = [];
   public _guid: string | null | undefined;
+    timerId: any;
 
   constructor(http: HttpClient, private _Activatedroute: ActivatedRoute) {
     this._http = http;
@@ -20,6 +21,18 @@ export class LogListComponent implements OnInit {
 
   ngOnInit(): void {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
+    this.syncDirList();
+    this.timerId = setInterval(() => {
+      this.syncDirList();
+    }, 50 * 1000);
+
+
+    console.log("this._guid", this._guid);
+  }
+  ngOnDestroy(): void {
+    clearInterval(this.timerId);
+  }
+  syncDirList(): void {
     this._http.get<LogMsg[]>(environment.appServerURL + '/api/v3/getLogs/' + this._guid).subscribe(result => {
       console.info('result', result);
       this._logMsg = result;
@@ -30,7 +43,8 @@ export class LogListComponent implements OnInit {
       //console.info(' this.dirListingDTO', this.dirListingDTO);
       // console.info(' this.dirListingDTO length', this.dirListingDTO.length);
     }, (error: any) => console.error(error));
-    console.log("this._guid", this._guid);
+
+
   }
   async view(pRestoreFileName: string): Promise<void> {
     console.info(' pRestoreFileName', pRestoreFileName);

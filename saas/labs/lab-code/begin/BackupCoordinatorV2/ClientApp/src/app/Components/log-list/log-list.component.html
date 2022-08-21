@@ -1,8 +1,8 @@
-<h1 id="tableLabel">OffSite Log Listing length:{{_logMsg.length}}</h1>
+<h1 id="tableLabel">OffSite Log Listing</h1>
 
 
 
-<p *ngIf="!_logMsg"><em>Loading...</em></p>
+<p *ngIf="_logMsg.length==0"><em>Loading, is the agent running?</em></p>
 
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="_logMsg">
   <thead>

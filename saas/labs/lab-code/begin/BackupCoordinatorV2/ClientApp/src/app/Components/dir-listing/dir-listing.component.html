@@ -1,10 +1,10 @@
-<h1 id="tableLabel">OffSite Directory Listing length:{{dirListingDTO.length}}</h1>
+<h1 id="tableLabel">OffSite Directory Listing</h1>
 
 
 
-<p *ngIf="!dirListingDTO"><em>Loading...</em></p>
+<p *ngIf="_dirListingDTO.length==0"><em>Loading, is the agent running?</em></p>
 
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="dirListingDTO">
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="_dirListingDTO">
   <thead>
     <tr>
       <th>Action</th>
@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of dirListingDTO">
+    <tr *ngFor="let item of _dirListingDTO">
       <td><button [disabled]="item.disabled" class="pure-button pure-button-primary" (click)='item.disabled=true;restoreFile(item)'>Restore</button></td>
       <td>{{ item.FileName }}</td>
       <td>{{ item.length | number }}</td>

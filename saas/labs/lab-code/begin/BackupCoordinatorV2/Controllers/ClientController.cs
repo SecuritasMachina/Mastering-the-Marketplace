@@ -12,6 +12,10 @@ using System.Net;
 using System.Net.Mime;
 using WebListener;
 using Microsoft.Data.SqlClient;
+using Microsoft.Azure.ServiceBus.Management;
+using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
+using Azure.Identity;
 
 namespace BackupCoordinatorV2.Controllers
 {
@@ -143,7 +147,7 @@ namespace BackupCoordinatorV2.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         //[Consumes("application/json")]
         [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}/{pNewFileName}/{fileLength}")]
-        public ActionResult<string> postBackupHistory( string itemKey, string backupFileName, string pNewFileName,long fileLength)
+        public ActionResult<string> postBackupHistory(string itemKey, string backupFileName, string pNewFileName, long fileLength)
         {
 
             //string json = pFormBody.ToString();
@@ -153,7 +157,7 @@ namespace BackupCoordinatorV2.Controllers
                 //_logger.LogInformation("looking up " + customerGuid);
 
                 //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+            //    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
 
@@ -165,7 +169,7 @@ namespace BackupCoordinatorV2.Controllers
                     long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                     command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = timeStamp;
                     command.Parameters.Add("@fileLength", SqlDbType.BigInt).Value = fileLength;
-                    
+
                     command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
                     command.Parameters.Add("@backupFile", SqlDbType.VarChar).Value = backupFileName;
                     command.Parameters.Add("@pNewFileName", SqlDbType.VarChar).Value = pNewFileName;
@@ -188,6 +192,64 @@ namespace BackupCoordinatorV2.Controllers
 
         }
 
+        private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
+        private static string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+
+        [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/provisionUser/{customerGUID}")]
+        public async Task<ActionResult> provisionUserAsync(string customerGUID)
+        {
+            
+
+            try
+            {
+                string sql = @"INSERT INTO[dbo].[customers]
+           ([customerID],name)
+     VALUES
+           (@customerID,'Your Name')";
+
+                using (SqlConnection connection = new SqlConnection(SQLConnectionString))
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+
+                    command.Parameters.Add("@customerID", SqlDbType.UniqueIdentifier).Value = new Guid(customerGUID);
+                    command.ExecuteNonQuery();
+
+                    // return Ok(ret);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                DBSingleTon.Instance.write2Log(customerGUID, "ERROR", ex.ToString());
+
+                _logger.LogError(ex.ToString());
+                //return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
+
+           // _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+            //var client = new ManagementClient(_connectionString);
+            //ServiceBusClient client = new ServiceBusClient(_connectionString);
+            try
+            {
+                ServiceBusAdministrationClient client = new ServiceBusAdministrationClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", new DefaultAzureCredential());
+                string subscriptionsName = "client";
+                if (!await client.SubscriptionExistsAsync(customerGUID, subscriptionsName))
+                {
+                    await client.CreateSubscriptionAsync(customerGUID, subscriptionsName);
+                }
+            }
+            catch (Exception ex)
+            {
+                DBSingleTon.Instance.write2Log(customerGUID, "ERROR", ex.ToString());
+                _logger.LogError(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
+            return Ok();
+        }
+
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/BackupHistory/{itemKey}")]
@@ -201,8 +263,7 @@ namespace BackupCoordinatorV2.Controllers
                 //_logger.LogInformation("looking up " + customerGuid);
 
                 //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
+                
 
 
                 string sql = "select timeStamp2,backupFile,newFileName,fileLength from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
@@ -221,7 +282,7 @@ namespace BackupCoordinatorV2.Controllers
                         if (!rdr.IsDBNull(2))
                             logMsgDTO.newFileName = rdr.GetString(2);
                         if (!rdr.IsDBNull(3))
-                            logMsgDTO.fileLength = rdr.GetInt64(23);
+                            logMsgDTO.fileLength = rdr.GetInt64(3);
 
                         ret.Add(logMsgDTO);
                         // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
@@ -235,6 +296,7 @@ namespace BackupCoordinatorV2.Controllers
             }
             catch (Exception ex)
             {
+                DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
                 _logger.LogError(ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
             }
@@ -256,12 +318,12 @@ namespace BackupCoordinatorV2.Controllers
                 {
                     //_logger.LogInformation("looking up " + customerGuid);
 
-                    string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+                   // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+                    //string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
 
-                    string sql = "select * from backupHistory where customerGUID='1'";
+                    string sql = "select * from backupHistory where customerGUID='ab5fc41e-3814-4533-8f68-a691b4da9043";
                     using (SqlConnection connection = new SqlConnection(SQLConnectionString))
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
@@ -279,6 +341,7 @@ namespace BackupCoordinatorV2.Controllers
                 }
                 catch (Exception ex)
                 {
+                    DBSingleTon.Instance.write2Log("ab5fc41e-3814-4533-8f68-a691b4da9043", "ERROR", ex.ToString());
                     _logger.LogError(ex.ToString());
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
@@ -355,6 +418,7 @@ namespace BackupCoordinatorV2.Controllers
             }
             catch (Exception ex)
             {
+                DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
                 _logger.LogError(ex.ToString());
                 throw new Exception(ex.Message);
 

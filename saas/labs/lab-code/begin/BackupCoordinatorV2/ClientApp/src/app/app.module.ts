@@ -14,6 +14,7 @@ import { LogListComponent } from './Components/log-list/log-list.component';
 import { GlobalConstModule } from './Common/global-const/global-const.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { BackupHistoryComponent } from './Components/backup-history/backup-history.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,7 +23,8 @@ import { ToastrModule } from 'ngx-toastr';
     CounterComponent,
     FetchDataComponent,
     DirListingComponent,
-    LogListComponent
+    LogListComponent,
+    BackupHistoryComponent
     
   ],
   imports: [
@@ -36,6 +38,7 @@ import { ToastrModule } from 'ngx-toastr';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: ':guid', component: HomeComponent },
       { path: 'counter', component: CounterComponent },
+      { path: 'backupHistory/:guid', component: BackupHistoryComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'dirListing/:guid', component: DirListingComponent },
       { path: 'logListing/:guid', component: LogListComponent },

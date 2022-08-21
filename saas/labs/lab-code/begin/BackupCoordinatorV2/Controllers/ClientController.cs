@@ -138,14 +138,15 @@ namespace BackupCoordinatorV2.Controllers
             return json;
 
         }
-        [HttpPost]
+        //https://localhost:7074/api/v3/postBackupHistory/ab50c41e-3814-4533-8f68-a691b4da9043/Charles+Havranek+Resume+-+LongD9.pdf/Charles+Havranek+Resume+-+LongD9.pdf/147024
+        [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes("application/json")]
-        [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}")]
-        public ActionResult<string> postBackupHistory([FromBody] object pFormBody, string itemKey, string backupFileName)
+        //[Consumes("application/json")]
+        [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}/{pNewFileName}/{fileLength}")]
+        public ActionResult<string> postBackupHistory( string itemKey, string backupFileName, string pNewFileName,long fileLength)
         {
 
-            string json = pFormBody.ToString();
+            //string json = pFormBody.ToString();
             _logger.LogInformation("/apt/v1/postBackupHistory");
             try
             {
@@ -156,15 +157,20 @@ namespace BackupCoordinatorV2.Controllers
 
 
 
-                string sql = "insert into backupHistory([timeStamp2],[customerGUID],[backupFile]) values(@timeStamp,@customerGUID,@backupFile)";
+                string sql = "insert into backupHistory([timeStamp2],[customerGUID],[backupFile],[newFileName],[fileLength]) values(@timeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
                 using (SqlConnection connection = new SqlConnection(SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
                     long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                     command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = timeStamp;
+                    command.Parameters.Add("@fileLength", SqlDbType.BigInt).Value = fileLength;
+                    
                     command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
                     command.Parameters.Add("@backupFile", SqlDbType.VarChar).Value = backupFileName;
+                    command.Parameters.Add("@pNewFileName", SqlDbType.VarChar).Value = pNewFileName;
+
+
                     //command.Prepare();
                     command.BeginExecuteNonQuery();
 
@@ -199,12 +205,12 @@ namespace BackupCoordinatorV2.Controllers
 
 
 
-                string sql = "select timeStamp2,backupFile from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
+                string sql = "select timeStamp2,backupFile,newFileName,fileLength from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
                 using (SqlConnection connection = new SqlConnection(SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
-                   
+
                     command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
                     using SqlDataReader rdr = command.ExecuteReader();
                     while (rdr.Read())
@@ -212,7 +218,11 @@ namespace BackupCoordinatorV2.Controllers
                         BackupHistoryDTO logMsgDTO = new BackupHistoryDTO();
                         logMsgDTO.timeStamp = rdr.GetInt64(0);
                         logMsgDTO.backupFile = rdr.GetString(1);
-                        
+                        if (!rdr.IsDBNull(2))
+                            logMsgDTO.newFileName = rdr.GetString(2);
+                        if (!rdr.IsDBNull(3))
+                            logMsgDTO.fileLength = rdr.GetInt64(23);
+
                         ret.Add(logMsgDTO);
                         // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
                     }

@@ -16,6 +16,7 @@ using Microsoft.Azure.ServiceBus.Management;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Azure.Identity;
+using Azure.Core;
 
 namespace BackupCoordinatorV2.Controllers
 {
@@ -146,28 +147,24 @@ namespace BackupCoordinatorV2.Controllers
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         //[Consumes("application/json")]
-        [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}/{pNewFileName}/{fileLength}")]
-        public ActionResult<string> postBackupHistory(string itemKey, string backupFileName, string pNewFileName, long fileLength)
+        [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}/{pNewFileName}/{fileLength}/{startTimeStamp}")]
+        public ActionResult<string> postBackupHistory(string itemKey, string backupFileName, string pNewFileName, long fileLength,long startTimeStamp)
         {
 
             //string json = pFormBody.ToString();
             _logger.LogInformation("/apt/v1/postBackupHistory");
             try
             {
-                //_logger.LogInformation("looking up " + customerGuid);
-
-                //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                //    string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
-
-
-                string sql = "insert into backupHistory([timeStamp2],[customerGUID],[backupFile],[newFileName],[fileLength]) values(@timeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
+                  string sql = @"insert into backupHistory([timeStamp2],endTimeStamp,[customerGUID],[backupFile],
+                [newFileName],[fileLength]) 
+                values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
                 using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
                     long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                    command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = timeStamp;
+                    command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = startTimeStamp;
+                    command.Parameters.Add("@endTimeStamp", SqlDbType.BigInt).Value = timeStamp;
                     command.Parameters.Add("@fileLength", SqlDbType.BigInt).Value = fileLength;
 
                     command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
@@ -210,7 +207,7 @@ namespace BackupCoordinatorV2.Controllers
                 newGuid = new Guid(pSubscriptionGuid);
             }
             catch (Exception ignore) { }
-            
+
             dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
             DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
             string contactName = stuff.DisplayName == null ? " stuff.DisplayName" : stuff.DisplayName;
@@ -221,7 +218,7 @@ namespace BackupCoordinatorV2.Controllers
             string TenantId = stuff.TenantId == null ? " stuff.TenantId" : stuff.TenantId;
             string PurchaseIdToken = stuff.PurchaseIdToken == null ? " stuff.PurchaseIdToken" : stuff.PurchaseIdToken;
 
-            
+
             bool foundCustomer = false;
             string sql = "select customerID from customers where contactEmail=@contactEmail";
             using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
@@ -233,7 +230,7 @@ namespace BackupCoordinatorV2.Controllers
                 using SqlDataReader rdr = command.ExecuteReader();
                 while (rdr.Read())
                 {
-                    newGuid = new Guid(rdr.GetString(0));
+                    newGuid = rdr.GetGuid(0);
                     foundCustomer = true;
                 }
             }
@@ -277,7 +274,25 @@ namespace BackupCoordinatorV2.Controllers
 
                 try
                 {
-                    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(_connectionString);
+                    // TokenCredential tk = new TokenCredential();
+                    string userAssignedClientId = "e837d735-07e0-4adc-9336-80344215b102";
+                    //DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
+                   // TokenRequestContext requestContext = default;
+                    TokenCredential credential2 = new ClientSecretCredential("db2361da-c4d2-4472-85dc-00969813cbe0", "e837d735-07e0-4adc-9336-80344215b102", "HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA");
+                    var client2 = new ServiceBusClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2);
+                    //AccessToken tk = credential.GetToken(requestContext);
+                    AccessToken accessToken;
+                    //value: HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA
+                    //Secret: 82b86ae3-eb2a-47fd-8f3b-152e1b50c5a6
+                    //e837d735-07e0-4adc-9336-80344215b102
+                    //var _managedCredential = new ManagedIdentityCredential("e837d735-07e0-4adc-9336-80344215b102");
+                   // accessToken = await credential.GetTokenAsync(
+                   //                         new TokenRequestContext(
+                  //                              new[] { "https://servicebus.azure.net" })).ConfigureAwait(false);
+                    ServiceBusAdministrationClientOptions options = new ServiceBusAdministrationClientOptions();
+                    //accessToken.
+                    //    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(credential,"Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=ProvisioningPolicy;SharedAccessKey=rR1lVUGwoWh+avYBsRmC+AWgnKNcIa9/gUAJ9vf0iHI=;EntityPath=ab50c41e-3814-4533-8f68-a691b4da9043");
+                    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient( "SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2, options);
                     string subscriptionsName = "client";
 
                     await client.CreateSubscriptionAsync(newGuid.ToString(), subscriptionsName);
@@ -303,7 +318,7 @@ namespace BackupCoordinatorV2.Controllers
             try
             {
 
-                string sql = "select timeStamp2,backupFile,newFileName,fileLength from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
+                string sql = "select timeStamp2,backupFile,newFileName,fileLength,endTimeStamp from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
                 using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -320,6 +335,9 @@ namespace BackupCoordinatorV2.Controllers
                             logMsgDTO.newFileName = rdr.GetString(2);
                         if (!rdr.IsDBNull(3))
                             logMsgDTO.fileLength = rdr.GetInt64(3);
+                        if (!rdr.IsDBNull(4))
+                            logMsgDTO.endTimeStamp = rdr.GetInt64(4);
+                        
 
                         ret.Add(logMsgDTO);
                         // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");

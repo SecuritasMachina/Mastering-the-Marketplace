@@ -57,6 +57,10 @@ namespace BackupCoordinatorV2.Controllers
         public AgentConfig GetAgentConfig(string customerGuid)
         {
             AgentConfig ret = new AgentConfig();
+            if (customerGuid.Equals("null"))
+            {
+                return ret;
+            }
             _logger.LogInformation("looking up " + customerGuid);
 
             // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
@@ -68,7 +72,7 @@ namespace BackupCoordinatorV2.Controllers
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {
                 SqlParameter[] param = new SqlParameter[1];
-                param[0] = new SqlParameter("@customerId", customerGuid);
+                param[0] = new SqlParameter("@customerId",new Guid(customerGuid));
                 command.Parameters.Add(param[0]);
                 connection.Open();
                 using (SqlDataReader reader = command.ExecuteReader())

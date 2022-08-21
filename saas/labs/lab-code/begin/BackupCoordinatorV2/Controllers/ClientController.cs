@@ -195,55 +195,94 @@ namespace BackupCoordinatorV2.Controllers
         private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
         private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
-        [HttpGet]
+
+
+
+        [HttpPost]
+        [Consumes("application/json")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Route("/api/v3/provisionUser/{customerGUID}")]
-        public async Task<ActionResult> provisionUserAsync(string customerGUID)
+        [Route("/api/v3/provisionUser")]
+        public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody)
         {
+            dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
 
+            string contactName = stuff.DisplayName;
+            string contactEmail = stuff.Email;
+            string SubscriptionName = stuff.SubscriptionName;
+            string FulfillmentStatus = stuff.FulfillmentStatus == null ? " stuff.FulfillmentStatus" : stuff.FulfillmentStatus;
+            string SubscriptionId = stuff.SubscriptionId == null ? " stuff.SubscriptionId" : stuff.SubscriptionId;
+            string TenantId = stuff.TenantId == null ? " stuff.TenantId" : stuff.TenantId;
+            string PurchaseIdToken = stuff.PurchaseIdToken == null ? " stuff.PurchaseIdToken" : stuff.PurchaseIdToken;
 
-            try
+            Guid newGuid = Guid.NewGuid();
+            bool foundCustomer = false;
+            string sql = "select customerID from customers where contactEmail=@contactEmail";
+            using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
             {
-                string sql = @"INSERT INTO[dbo].[customers]
-           ([customerID],name)
-     VALUES
-           (@customerID,'Your Name')";
+                connection.Open();
 
-                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                command.Parameters.Add("@contactEmail", SqlDbType.VarChar).Value = contactEmail;
+                using SqlDataReader rdr = command.ExecuteReader();
+                while (rdr.Read())
                 {
-                    connection.Open();
-
-                    command.Parameters.Add("@customerID", SqlDbType.UniqueIdentifier).Value = new Guid(customerGUID);
-                    command.ExecuteNonQuery();
-
-                    // return Ok(ret);
-
+                    newGuid = new Guid(rdr.GetString(0));
+                    foundCustomer = true;
                 }
             }
-            catch (Exception ex)
+
+            if (!foundCustomer)
             {
-                DBSingleTon.Instance.write2Log(customerGUID, "ERROR", ex.ToString());
+                try
+                {
+                    sql = @"INSERT INTO[dbo].[customers]
+           ([customerID],name,contactEmail,SubscriptionName,FulfillmentStatus,SubscriptionId,TenantId,PurchaseIdToken)
+     VALUES
+           (@customerID,@contactName,@contactEmail,@SubscriptionName,@FulfillmentStatus,@SubscriptionId,@TenantId,@PurchaseIdToken)";
 
-                _logger.LogError(ex.ToString());
-                //return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                    using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        connection.Open();
+
+                        command.Parameters.Add("@customerID", SqlDbType.UniqueIdentifier).Value = newGuid;
+                        command.Parameters.Add("@contactName", SqlDbType.NVarChar).Value = contactName;
+                        command.Parameters.Add("@contactEmail", SqlDbType.NVarChar).Value = contactEmail;
+                        command.Parameters.Add("@SubscriptionName", SqlDbType.NVarChar).Value = SubscriptionName;
+                        command.Parameters.Add("@FulfillmentStatus", SqlDbType.NVarChar).Value = FulfillmentStatus;
+                        command.Parameters.Add("@SubscriptionId", SqlDbType.NVarChar).Value = SubscriptionId;
+                        command.Parameters.Add("@TenantId", SqlDbType.NVarChar).Value = TenantId;
+                        command.Parameters.Add("@PurchaseIdToken", SqlDbType.NVarChar).Value = PurchaseIdToken;
+                        command.ExecuteNonQuery();
+
+                        // return Ok(ret);
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DBSingleTon.Instance.write2Log(newGuid.ToString(), "ERROR", ex.ToString());
+
+                    _logger.LogError(ex.ToString());
+                    //return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                }
+
+
+                try
+                {
+                    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(_connectionString);
+                    string subscriptionsName = "client";
+
+                    await client.CreateSubscriptionAsync(newGuid.ToString(), subscriptionsName);
+                }
+                catch (Exception ex)
+                {
+                    DBSingleTon.Instance.write2Log(newGuid.ToString(), "ERROR", ex.ToString());
+                    _logger.LogError(ex.ToString());
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                }
             }
-
-
-            try
-            {
-                ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(_connectionString);
-                string subscriptionsName = "client";
-
-                await client.CreateSubscriptionAsync(customerGUID, subscriptionsName);
-            }
-            catch (Exception ex)
-            {
-                DBSingleTon.Instance.write2Log(customerGUID, "ERROR", ex.ToString());
-                _logger.LogError(ex.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
-            }
-            return Ok();
+            return Ok(newGuid.ToString());
         }
 
         [HttpGet]
@@ -256,11 +295,6 @@ namespace BackupCoordinatorV2.Controllers
             _logger.LogInformation("/apt/v3/BackupHistory");
             try
             {
-                //_logger.LogInformation("looking up " + customerGuid);
-
-                //string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-
-
 
                 string sql = "select timeStamp2,backupFile,newFileName,fileLength from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
                 using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
@@ -283,12 +317,10 @@ namespace BackupCoordinatorV2.Controllers
                         ret.Add(logMsgDTO);
                         // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
                     }
-                    return Ok(ret);
-
                 }
                 // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
                 //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
-                return Ok(ret);
+
             }
             catch (Exception ex)
             {
@@ -296,7 +328,7 @@ namespace BackupCoordinatorV2.Controllers
                 _logger.LogError(ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
             }
-            return Ok();
+            return Ok(ret);
 
         }
 

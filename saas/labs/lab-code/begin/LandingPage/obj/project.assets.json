@@ -1197,6 +1197,15 @@
             "rid": "win"
           }
         }
+      },
+      "Common/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Common.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Common.dll": {}
+        }
       }
     }
   },
@@ -4004,11 +4013,17 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "Common/1.0.0": {
+      "type": "project",
+      "path": "../../../../../../Common/Common/Common.csproj",
+      "msbuildProject": "../../../../../../Common/Common/Common.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "Azure.Messaging.ServiceBus >= 7.10.0",
+      "Common >= 1.0.0",
       "Marketplace.SaaS.Client >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.8",
       "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 6.0.8",
@@ -4049,7 +4064,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\data\\source\\Common\\Common\\Common.csproj": {
+              "projectPath": "C:\\data\\source\\Common\\Common\\Common.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

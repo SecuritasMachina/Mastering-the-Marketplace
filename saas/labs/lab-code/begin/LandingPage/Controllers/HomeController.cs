@@ -8,6 +8,8 @@ using Microsoft.Marketplace.SaaS;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Marketplace.SaaS.Models;
+using System;
+using Common.Utils.Comm;
 
 namespace LandingPage.Controllers
 {
@@ -77,7 +79,11 @@ namespace LandingPage.Controllers
                 PurchaseIdToken = token
             };
 
+            HTTPUtils.ProvisionUser(model.SubscriptionId, model);
+
             return View(model);
         }
+
+       
     }
 }

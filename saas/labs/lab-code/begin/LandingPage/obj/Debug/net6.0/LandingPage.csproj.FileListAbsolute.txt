@@ -94,3 +94,8 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bi
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.Identity.Web.Certificateless.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Microsoft.IdentityModel.LoggingExtensions.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Common.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Common.pdb
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Common.dll.config
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\bin\Debug\net6.0\Newtonsoft.Json.xml

@@ -8,10 +8,11 @@
     ".NETCoreApp,Version=v6.0": {
       "LandingPage/1.0.0": {
         "dependencies": {
-          "Azure.Messaging.ServiceBus": "7.9.0",
+          "Azure.Messaging.ServiceBus": "7.10.0",
+          "Common": "1.0.0",
           "Marketplace.SaaS.Client": "1.0.0",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.7",
-          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "6.0.7",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.8",
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "6.0.8",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.1",
           "Microsoft.Identity.Web": "1.25.1",
           "Microsoft.Identity.Web.MicrosoftGraph": "1.25.1",
@@ -66,7 +67,7 @@
           }
         }
       },
-      "Azure.Messaging.ServiceBus/7.9.0": {
+      "Azure.Messaging.ServiceBus/7.10.0": {
         "dependencies": {
           "Azure.Core": "1.25.0",
           "Azure.Core.Amqp": "1.2.0",
@@ -76,8 +77,8 @@
         },
         "runtime": {
           "lib/netstandard2.0/Azure.Messaging.ServiceBus.dll": {
-            "assemblyVersion": "7.9.0.0",
-            "fileVersion": "7.900.22.36103"
+            "assemblyVersion": "7.10.0.0",
+            "fileVersion": "7.1000.22.41103"
           }
         }
       },
@@ -123,25 +124,25 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Authentication.JwtBearer/6.0.7": {
+      "Microsoft.AspNetCore.Authentication.JwtBearer/6.0.8": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.20.0"
         },
         "runtime": {
           "lib/net6.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
-            "assemblyVersion": "6.0.7.0",
-            "fileVersion": "6.0.722.32205"
+            "assemblyVersion": "6.0.8.0",
+            "fileVersion": "6.0.822.36316"
           }
         }
       },
-      "Microsoft.AspNetCore.Authentication.OpenIdConnect/6.0.7": {
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/6.0.8": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.20.0"
         },
         "runtime": {
           "lib/net6.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
-            "assemblyVersion": "6.0.7.0",
-            "fileVersion": "6.0.722.32205"
+            "assemblyVersion": "6.0.8.0",
+            "fileVersion": "6.0.822.36316"
           }
         }
       },
@@ -396,8 +397,8 @@
       },
       "Microsoft.Identity.Web/1.25.1": {
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.7",
-          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "6.0.7",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.8",
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "6.0.8",
           "Microsoft.Identity.Web.Certificate": "1.25.1",
           "Microsoft.Identity.Web.Certificateless": "1.25.1",
           "Microsoft.Identity.Web.TokenCache": "1.25.1",
@@ -828,6 +829,19 @@
             "fileVersion": "5.0.20.51904"
           }
         }
+      },
+      "Common/1.0.0": {
+        "runtime": {
+          "Common.dll": {}
+        }
+      },
+      "Newtonsoft.Json/13.0.0.0": {
+        "runtime": {
+          "Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
+          }
+        }
       }
     }
   },
@@ -858,12 +872,12 @@
       "path": "azure.identity/1.3.0",
       "hashPath": "azure.identity.1.3.0.nupkg.sha512"
     },
-    "Azure.Messaging.ServiceBus/7.9.0": {
+    "Azure.Messaging.ServiceBus/7.10.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3JdsbpLSY3uLuRPsqpSxItkIwnFBSFYgxsynD6bDr/riQrX+fhXibp3S+rV4HJXZ2IdkzgVqrlII7P7fn0C07g==",
-      "path": "azure.messaging.servicebus/7.9.0",
-      "hashPath": "azure.messaging.servicebus.7.9.0.nupkg.sha512"
+      "sha512": "sha512-eB6r5TYS9IudyfypXAsRWydCmoCsavi8k6mBmFaNPlRAcB7GWwdU9TjMBGpF6anKCmWVj3+82aIJ22nXGbrfCw==",
+      "path": "azure.messaging.servicebus/7.10.0",
+      "hashPath": "azure.messaging.servicebus.7.10.0.nupkg.sha512"
     },
     "Azure.Security.KeyVault.Certificates/4.1.0": {
       "type": "package",
@@ -886,19 +900,19 @@
       "path": "marketplace.saas.client/1.0.0",
       "hashPath": "marketplace.saas.client.1.0.0.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.Authentication.JwtBearer/6.0.7": {
+    "Microsoft.AspNetCore.Authentication.JwtBearer/6.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-gO4G2lp4//xoLsxuJ01BwQjaY5yuRzY+8UWXONDcz0dBBFeKSU10mIFWVae928DQCb9FuMgptWI1MpMkj3EbjQ==",
-      "path": "microsoft.aspnetcore.authentication.jwtbearer/6.0.7",
-      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.6.0.7.nupkg.sha512"
+      "sha512": "sha512-ktmldryRkyAMRQpluCZaltRvlcOrlE9SQDmnMOh+XTbck6Vi296UjvwdJb4ULU6PgvZh5j00KAp7uhjpcWQopA==",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/6.0.8",
+      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.6.0.8.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.Authentication.OpenIdConnect/6.0.7": {
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/6.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-oWz+qlt2U7DHIdQVHlnLy8wMWLi89+2Tm+iys5R+HgoEUZhkHuGv1SuTMWZEXhZjf/v9UmhYym44ZE4esn/ULg==",
-      "path": "microsoft.aspnetcore.authentication.openidconnect/6.0.7",
-      "hashPath": "microsoft.aspnetcore.authentication.openidconnect.6.0.7.nupkg.sha512"
+      "sha512": "sha512-i4w+mo2Vzy33EpxeFuRNcNojRknQaURVg8CQkHyLDJj2KMXcBLBiEtaeGqzwE9e6BNCb05lL8WfMAeJLERhCWg==",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/6.0.8",
+      "hashPath": "microsoft.aspnetcore.authentication.openidconnect.6.0.8.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Cryptography.Internal/5.0.8": {
       "type": "package",
@@ -1431,6 +1445,16 @@
       "sha512": "sha512-c1ho9WU9ZxMZawML+ssPKZfdnrg/OjR3pe0m9v8230z3acqphwvPJqzAkH54xRYm5ntZHGG1EPP3sux9H3qSPg==",
       "path": "system.windows.extensions/5.0.0",
       "hashPath": "system.windows.extensions.5.0.0.nupkg.sha512"
+    },
+    "Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/13.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

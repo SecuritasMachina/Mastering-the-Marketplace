@@ -75,3 +75,8 @@ C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\ob
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\Common.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\Common.pdb
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\Common.dll.config
+C:\data\source\Mastering-the-Marketplace\saas\labs\lab-code\begin\LandingPage\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.xml

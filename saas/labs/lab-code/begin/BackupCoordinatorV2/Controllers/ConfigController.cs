@@ -30,11 +30,40 @@ namespace BackupCoordinatorV2.Controllers
         {
             _logger.LogInformation("looking up " + customerGuid);
 
-           // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
+          
+            AgentConfig agentConfig = GetAgentConfig(customerGuid);
+           
+            string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " +jsonPopulated.Length);
+            return jsonPopulated;
+
+
+        }
+        [HttpGet]
+        [Route("/api/v2/customerConfig/{customerGuid}")]
+        public AgentConfig customerConfig(string customerGuid)
+        {
+            _logger.LogInformation("customerConfig up " + customerGuid);
+
+
+            AgentConfig ret = GetAgentConfig(customerGuid);
+            ret.ServiceBusEndPoint = null;
+        //    string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+            ///     DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " + jsonPopulated.Length);
+            return ret;
+
+
+        }
+        public AgentConfig GetAgentConfig(string customerGuid)
+        {
+            AgentConfig ret = new AgentConfig();
+            _logger.LogInformation("looking up " + customerGuid);
+
+            // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
             string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
 
 
-            AgentConfig agentConfig = new AgentConfig();
+           
             using (SqlConnection connection = new SqlConnection(SQLConnectionString))
             using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
             {
@@ -47,17 +76,19 @@ namespace BackupCoordinatorV2.Controllers
                     while (reader.Read())
 
                     {
-                        agentConfig.passPhrase = reader["passPhrase"].ToString();
-                        agentConfig.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
-                        agentConfig.topicName = "controller";
-                       
+                        ret.passPhrase = reader["passPhrase"].ToString();
+                        ret.name = reader["name"].ToString();
+                        ret.contactEmail = reader["contactEmail"].ToString();
+                        ret.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
+                        ret.topicName = "controller";
+
 
                     }
                 }
             }
-            string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " +jsonPopulated.Length);
-            return jsonPopulated;
+            //string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+            //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " + jsonPopulated.Length);
+            return ret;
 
 
         }

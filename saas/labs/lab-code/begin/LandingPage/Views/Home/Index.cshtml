@@ -1,6 +1,6 @@
 ﻿@model LandingPage.ViewModels.Home.IndexViewModel
 @{
-    ViewData["Title"] = "Contoso Offer Landing Page";
+    ViewData["Title"] = "SecuritasMachina Offer Landing Page";
 }
 
 @if (ViewBag.Message != null)
@@ -15,7 +15,7 @@ else
         <h3>Thank you for your subscription</h3>
 
 
-        <p>Please verify the following information is correct before submitting your subscription for activation by Contoso, Inc.</p>
+       @* <p>Please verify the following information is correct before submitting your subscription for activation</p>
 
         <table class="main-table">
             <tbody>
@@ -26,19 +26,24 @@ else
                 <tr><td class="main-td">Subscription State</td><td>@Model.FulfillmentStatus</td></tr>
                 <tr><td class="main-td">Tenant ID</td><td>@Model.TenantId</td></tr>
             </tbody>
-        </table>
+        </table>*@
 
 
         <h3>Available Customer Actions</h3>
-
+        <p>
+            <a href="https://storage.googleapis.com/securitasmachina.com/OffsiteBackup_InstallInstructions.pdf" target="_blank">Agent &amp; Azure Configuration</a>
+        </p>
+        <p>
+        <a href="https://securitasmachinacoordinater.azurewebsites.net?guid=@Model.SubscriptionId "  target="_blank">Your Admin Portal</a>
+        </p>
         <div style="text-align: left">
             <ul>
-                @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
+               @* @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
                 {
                     <li>
                         @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
                     </li>
-                }
+                }*@
                 
                 @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.Subscribed)
                 {

@@ -201,20 +201,27 @@ namespace BackupCoordinatorV2.Controllers
         [HttpPost]
         [Consumes("application/json")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Route("/api/v3/provisionUser")]
-        public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody)
+        [Route("/api/v3/provisionUser/{pSubscriptionGuid}")]
+        public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody, string pSubscriptionGuid)
         {
+            Guid newGuid = Guid.NewGuid();
+            try
+            {
+                newGuid = new Guid(pSubscriptionGuid);
+            }
+            catch (Exception ignore) { }
+            
             dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
-
-            string contactName = stuff.DisplayName;
-            string contactEmail = stuff.Email;
-            string SubscriptionName = stuff.SubscriptionName;
+            DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
+            string contactName = stuff.DisplayName == null ? " stuff.DisplayName" : stuff.DisplayName;
+            string contactEmail = stuff.Email == null ? " stuff.Email" : stuff.Email;
+            string SubscriptionName = stuff.SubscriptionName == null ? " stuff.SubscriptionName" : stuff.SubscriptionName;
             string FulfillmentStatus = stuff.FulfillmentStatus == null ? " stuff.FulfillmentStatus" : stuff.FulfillmentStatus;
             string SubscriptionId = stuff.SubscriptionId == null ? " stuff.SubscriptionId" : stuff.SubscriptionId;
             string TenantId = stuff.TenantId == null ? " stuff.TenantId" : stuff.TenantId;
             string PurchaseIdToken = stuff.PurchaseIdToken == null ? " stuff.PurchaseIdToken" : stuff.PurchaseIdToken;
 
-            Guid newGuid = Guid.NewGuid();
+            
             bool foundCustomer = false;
             string sql = "select customerID from customers where contactEmail=@contactEmail";
             using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
@@ -344,13 +351,6 @@ namespace BackupCoordinatorV2.Controllers
                 _logger.LogInformation("/apt/v1/testMyHealth");
                 try
                 {
-                    //_logger.LogInformation("looking up " + customerGuid);
-
-                    // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-                    //string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
-
-
                     string sql = "select * from backupHistory where customerGUID='ab5fc41e-3814-4533-8f68-a691b4da9043";
                     using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
                     using (SqlCommand command = new SqlCommand(sql, connection))

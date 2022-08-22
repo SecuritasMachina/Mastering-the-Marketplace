@@ -9,7 +9,7 @@ namespace BackupCoordinatorV2.Utils
 {
     public class DBSingleTon
     {
-        private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+        public static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("MYSQLCONNSTR_OffSiteBackupSQLConnection");
 
 
         private static SqliteConnection? con;

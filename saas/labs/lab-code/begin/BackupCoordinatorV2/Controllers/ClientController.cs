@@ -26,8 +26,6 @@ namespace BackupCoordinatorV2.Controllers
     public class ClientController : ControllerBase
     {
         private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
-        private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
 
         private readonly ILogger<ClientController> _logger;
 
@@ -106,46 +104,43 @@ namespace BackupCoordinatorV2.Controllers
         {
 
             string json = pFormBody.ToString();
+
+
+            _logger.LogInformation("/v3/putCache/" + itemKey + " " + json);
+            bool updateSuccess = false;
             try
             {
-
-                _logger.LogInformation("/v3/putCache/" + itemKey + " " + json);
-                try
-                {
-                    string stm = "UPDATE mycache set msg= @myJson where id =@myId";
-                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                    cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
-                    cmd2.Parameters.AddWithValue("@myJson", json);
-                    cmd2.Prepare();
-                    cmd2.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.ToString());
-                }
-                try
-                {
-                    string stm = "INSERT INTO mycache(id, msg) VALUES(@myId, @myJson)";
-                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                    cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
-                    cmd2.Parameters.AddWithValue("@myJson", json);
-                    cmd2.Prepare();
-                    cmd2.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    if (!ex.Message.ToLower().Contains("unique"))
-                        _logger.LogError(ex.ToString());
-                }
-
+                string stm = "UPDATE mycache set msg= @myJson where id =@myId";
+                SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                cmd2.Parameters.AddWithValue("@myId", itemKey);
+                cmd2.Parameters.AddWithValue("@myJson", json);
+                cmd2.Prepare();
+                int rows = cmd2.ExecuteNonQuery();
+                if (rows > 0) updateSuccess = true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                throw new Exception(ex.Message);
-
             }
-            return json;
+            if (!updateSuccess)
+            {
+                try
+                {
+                    string stm = "INSERT INTO mycache(id, msg) VALUES(@myId, @myJson)";
+                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                    cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@myJson", json);
+                    cmd2.Prepare();
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
+                }
+            }
+
+
+            return Ok();
 
         }
         //https://localhost:7074/api/v3/postBackupHistory/ab50c41e-3814-4533-8f68-a691b4da9043/Charles+Havranek+Resume+-+LongD9.pdf/Charles+Havranek+Resume+-+LongD9.pdf/147024
@@ -163,7 +158,7 @@ namespace BackupCoordinatorV2.Controllers
                 string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
                 newFileName,fileLength) 
                 values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
-                using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -176,18 +171,7 @@ namespace BackupCoordinatorV2.Controllers
                     command.Parameters.AddWithValue("@customerGUID", itemKey);
                     command.Parameters.AddWithValue("@backupFile", backupFileName);
                     command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
-                    if (false)
-                    {
-                        command.Parameters.Add("@timeStamp", MySqlDbType.Int64).Value = startTimeStamp;
-                        command.Parameters.Add("@endTimeStamp", MySqlDbType.Int64).Value = timeStamp;
-                        command.Parameters.Add("@fileLength", MySqlDbType.Int64).Value = fileLength;
 
-                        command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
-                        command.Parameters.Add("@backupFile", MySqlDbType.Text).Value = backupFileName;
-                        command.Parameters.Add("@pNewFileName", MySqlDbType.Text).Value = pNewFileName;
-                    }
-
-                    //command.Prepare();
                     command.ExecuteNonQuery();
 
                 }
@@ -197,9 +181,10 @@ namespace BackupCoordinatorV2.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
+                DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
             }
-            return Ok();
+            //return Ok();
 
         }
 
@@ -231,7 +216,7 @@ namespace BackupCoordinatorV2.Controllers
 
             bool foundCustomer = false;
             string sql = "select customerID from customers where contactEmail=@contactEmail";
-            using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
             using (MySqlCommand command = new MySqlCommand(sql, connection))
             {
                 connection.Open();
@@ -254,7 +239,7 @@ namespace BackupCoordinatorV2.Controllers
      VALUES
            (@customerID,@contactName,@contactEmail,@SubscriptionName,@FulfillmentStatus,@SubscriptionId,@TenantId,@PurchaseIdToken)";
 
-                    using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                    using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         connection.Open();
@@ -332,8 +317,8 @@ namespace BackupCoordinatorV2.Controllers
             try
             {
 
-                string sql = "select starttimeStamp,backupFile,newFileName,fileLength,endTimeStamp from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
-                using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                string sql = "select starttimeStamp,backupFile,newFileName,fileLength,endTimeStamp from backupHistory where customerGUID=@customerGUID order by starttimeStamp desc";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -375,47 +360,38 @@ namespace BackupCoordinatorV2.Controllers
         public ActionResult<string> checkHealth()
         {
 
-            //string json = pFormBody.ToString();
+
+            _logger.LogInformation("/apt/v1/testMyHealth");
             try
             {
-
-                _logger.LogInformation("/apt/v1/testMyHealth");
-                try
+                string sql = "select * from offsite.customers where customerid='ab5fc41e-3814-4533-8f68-a691b4da9043'";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    string sql = "select * from backupHistory where customerGUID='ab5fc41e-3814-4533-8f68-a691b4da9043";
-                    using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
-                    {
 
-                        connection.Open();
+                    connection.Open();
 
 
-                        command.Prepare();
-                        command.ExecuteReader();// .BeginExecuteNonQuery();
+                    command.Prepare();
+                    command.ExecuteReader();// .BeginExecuteNonQuery();
 
-                    }
-                    // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-                    //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
-                    return Ok();
                 }
-                catch (Exception ex)
-                {
-                    DBSingleTon.Instance.write2Log("ab5fc41e-3814-4533-8f68-a691b4da9043", "ERROR", ex.ToString());
-                    _logger.LogError(ex.ToString());
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-
-
+                // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+                //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+                return Ok();
             }
             catch (Exception ex)
             {
+                DBSingleTon.Instance.write2Log("HealthCheck", "ERROR", ex.ToString());
                 _logger.LogError(ex.ToString());
-                throw new Exception(ex.Message);
-
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            return Ok();
+
 
         }
+
+
+
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
@@ -423,7 +399,7 @@ namespace BackupCoordinatorV2.Controllers
         public ActionResult<string> putLog([FromBody] object value, string customerGuid, string messageType)
         {
             DBSingleTon.Instance.write2Log(customerGuid, messageType, value.ToString());
-            return "Log written";
+            return Ok();
         }
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
@@ -432,7 +408,7 @@ namespace BackupCoordinatorV2.Controllers
         public ActionResult<string> putLog([FromBody] object value, string customerGuid)
         {
             DBSingleTon.Instance.write2Log(customerGuid, "TRACE", value.ToString());
-            return "Log written";
+            return Ok();
         }
         [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
@@ -454,7 +430,7 @@ namespace BackupCoordinatorV2.Controllers
 
                 string stm = "select id,msg from mycache where id=@myId";
                 SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                cmd2.Parameters.AddWithValue("@myId", Uri.EscapeUriString(itemKey));
+                cmd2.Parameters.AddWithValue("@myId", itemKey);
 
                 cmd2.Prepare();
                 genericMessage.msgType = itemKey.Substring(0, itemKey.IndexOf("-"));
@@ -482,7 +458,7 @@ namespace BackupCoordinatorV2.Controllers
                 throw new Exception(ex.Message);
 
             }
-            return json;
+            return Ok(json);
         }
     }
 }

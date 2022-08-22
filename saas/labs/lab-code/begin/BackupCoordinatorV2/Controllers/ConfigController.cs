@@ -65,11 +65,10 @@ namespace BackupCoordinatorV2.Controllers
             _logger.LogInformation("looking up " + customerGuid);
 
             // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-            string SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
+           
 
            
-            using (MySqlConnection connection = new MySqlConnection(SQLConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
             using (MySqlCommand command = new MySqlCommand("select * from customers where customerId = @customerId", connection))
             {
                 //Sq//lParameter[] param = new SqlParameter[1];

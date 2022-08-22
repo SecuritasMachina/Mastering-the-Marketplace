@@ -33,6 +33,29 @@ namespace BackupCoordinatorV2.Controllers
         {
             _logger = logger;
         }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/agentDir/{customerGUID}")]
+        public async Task<ActionResult> agentDir([FromBody] DirListingDTO pDirListingDTO, string customerGUID)
+        {
+
+            PutCache(JsonConvert.SerializeObject(pDirListingDTO), "AgentStagingList-" + customerGUID);
+            //dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
+            //DBSingleTon.Instance.write2Log(customerGUID, "INFO", pFormBody.ToString());
+            return Ok();
+        }
+        [HttpGet]
+        [Consumes("application/json")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/agentDir/{customerGUID}")]
+        public async Task<ActionResult> agentDirGet( string customerGUID)
+        {
+
+            return Ok(getCache("AgentStagingList-" + customerGUID));
+        }
+
         [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes("application/json")]
@@ -126,9 +149,11 @@ namespace BackupCoordinatorV2.Controllers
             {
                 try
                 {
-                    string stm = "INSERT INTO mycache(id, msg) VALUES(@myId, @myJson)";
+                    string stm = "INSERT INTO mycache(id, msg,timeEntered) VALUES(@myId, @myJson, @timeEntered)";
                     SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                    long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                     cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@timeEntered", unixTimeMilliseconds);
                     cmd2.Parameters.AddWithValue("@myJson", json);
                     cmd2.Prepare();
                     cmd2.ExecuteNonQuery();
@@ -461,4 +486,5 @@ namespace BackupCoordinatorV2.Controllers
             return Ok(json);
         }
     }
+    
 }

@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using BackupCoordinatorV2.Utils;
 using Common.DTO.V2;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using WebListener.Models;
@@ -22,14 +23,13 @@ namespace WebListener
         internal string getConfig(string customerGUID)
         {
             OffSiteMessageDTO _OffSiteMessageDTO = new OffSiteMessageDTO();
-            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
-            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+            using (MySqlConnection connection = new MySqlConnection(SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand("select * from Customers where customerId = @customerId", connection))
             {
-                SqlParameter[] param = new SqlParameter[1];
-                param[0] = new SqlParameter("@customerId", customerGUID);
-                command.Parameters.Add(param[0]);
+                command.Parameters.Add("@customerId", MySqlDbType.VarChar).Value = customerGUID;
+                
                 connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
 
@@ -61,14 +61,12 @@ namespace WebListener
             _OffSiteMessageDTO.backupName = backupName;
             _OffSiteMessageDTO.status = status;
             // System.Diagnostics.Trace.TraceError("If you're seeing this, something bad happened");
-            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
-            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+            using (MySqlConnection connection = new MySqlConnection(SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand("select * from Customers where customerId = @customerId", connection))
             {
-                SqlParameter[] param = new SqlParameter[1];
-                param[0] = new SqlParameter("@customerId", customerGUID);
-                command.Parameters.Add(param[0]);
+                command.Parameters.Add("@customerId", MySqlDbType.VarChar).Value = customerGUID;
                 connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {

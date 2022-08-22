@@ -1,9 +1,9 @@
 ﻿using Common.DTO.V2;
 using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+
 
 namespace BackupCoordinatorV2.Utils
 {
@@ -30,35 +30,10 @@ namespace BackupCoordinatorV2.Utils
         }
         public void write2Log(string custGuid, string pLogType, string msg)
         {
-            if (pLogType.Equals("TRACE"))
-                return;
-            if (pLogType.Equals("DEBUG"))
-                return;
-            long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-            string sql = "INSERT INTO CustomerLogs(customerguid, timestamp,msgType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
-            // SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-            using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.Add("@myId", SqlDbType.UniqueIdentifier).Value = new Guid(custGuid);
 
-                    command.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
-                    command.Parameters.AddWithValue("@logType", pLogType);
-                    command.Parameters.AddWithValue("@myJson", msg);
-                    // command.Prepare();
-                    command.ExecuteNonQuery();
-                }
-            }
-
-        }
-        public void write2SQLLog(string custGuid, string pLogType, string msg)
-        {
-            write2Log(custGuid, pLogType, msg);
             long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
-            string stm = "INSERT INTO CustomerLogs(customerguid, timestamp,msgType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
+            string stm = "INSERT INTO mylog(id, logTime,logType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
             cmd2.Parameters.AddWithValue("@myId", custGuid);
             cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
@@ -66,13 +41,38 @@ namespace BackupCoordinatorV2.Utils
             cmd2.Parameters.AddWithValue("@myJson", msg);
             cmd2.Prepare();
             cmd2.ExecuteNonQuery();
+            write2SQLLog(custGuid,pLogType,msg);
+        }
+       
+        public void write2SQLLog(string custGuid, string pLogType, string msg)
+        {
+            if (pLogType.Equals("TRACE"))
+                return;
+            if (pLogType.Equals("DEBUG"))
+                return;
+            //write2Log(custGuid, pLogType, msg);
+            long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+            string stm = "INSERT INTO CustomerLogs(customerguid, dateEnteredtimestamp,msgType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
+           
+            using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+            using (MySqlCommand cmd2 = new MySqlCommand(stm, connection))
+            {
+                connection.Open();// .open();
+                cmd2.Parameters.AddWithValue("@myId", custGuid);
+                cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
+                cmd2.Parameters.AddWithValue("@logType", pLogType);
+                cmd2.Parameters.AddWithValue("@myJson", msg);
+               // cmd2.Prepare();
+                cmd2.ExecuteNonQuery();
+            }
 
         }
         public List<LogMsgDTO> getLogs(string custGuid)
         {
             List<LogMsgDTO> ret = new List<LogMsgDTO>();
-            DateTime now = DateTime.UtcNow;
-            long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+           // DateTime now = DateTime.UtcNow;
+           // long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
             string stm = "select logTime,msg,logType from mylog where id=@myId order by logTime desc";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());

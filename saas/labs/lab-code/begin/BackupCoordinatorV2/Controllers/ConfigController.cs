@@ -3,6 +3,7 @@ using Common.DTO.V2;
 using Common.Utils.Comm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Net.Mime;
@@ -68,20 +69,21 @@ namespace BackupCoordinatorV2.Controllers
 
 
            
-            using (SqlConnection connection = new SqlConnection(SQLConnectionString))
-            using (SqlCommand command = new SqlCommand("select * from customers where customerId = @customerId", connection))
+            using (MySqlConnection connection = new MySqlConnection(SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand("select * from customers where customerId = @customerId", connection))
             {
-                SqlParameter[] param = new SqlParameter[1];
-                param[0] = new SqlParameter("@customerId",new Guid(customerGuid));
-                command.Parameters.Add(param[0]);
+                //Sq//lParameter[] param = new SqlParameter[1];
+                //param[0] = new SqlParameter("@customerId",new Guid(customerGuid));
+                //command.Parameters.Add(param[0]);
+                command.Parameters.Add("@customerId", MySqlDbType.VarChar).Value = customerGuid;
                 connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
 
                     {
                         ret.passPhrase = reader["passPhrase"].ToString();
-                        ret.name = reader["name"].ToString();
+                        ret.name = reader["contactname"].ToString();
                         ret.contactEmail = reader["contactEmail"].ToString();
                         ret.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
                         ret.topicName = "controller";

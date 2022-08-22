@@ -6,24 +6,29 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
-using System.Data;
 
-using System.Net;
+
 using System.Net.Mime;
 using WebListener;
-using Microsoft.Data.SqlClient;
 using Microsoft.Azure.ServiceBus.Management;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Azure.Identity;
 using Azure.Core;
+using MySql.Data.MySqlClient;
 
 namespace BackupCoordinatorV2.Controllers
 {
+
+
     [ApiController]
     [Route("[controller]")]
     public class ClientController : ControllerBase
     {
+        private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
+        private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
+
+
         private readonly ILogger<ClientController> _logger;
 
         public ClientController(ILogger<ClientController> logger)
@@ -148,36 +153,45 @@ namespace BackupCoordinatorV2.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         //[Consumes("application/json")]
         [Route("/api/v3/postBackupHistory/{itemKey}/{backupFileName}/{pNewFileName}/{fileLength}/{startTimeStamp}")]
-        public ActionResult<string> postBackupHistory(string itemKey, string backupFileName, string pNewFileName, long fileLength,long startTimeStamp)
+        public ActionResult<string> postBackupHistory(string itemKey, string backupFileName, string pNewFileName, long fileLength, long startTimeStamp)
         {
 
             //string json = pFormBody.ToString();
             _logger.LogInformation("/apt/v1/postBackupHistory");
             try
             {
-                  string sql = @"insert into backupHistory([timeStamp2],endTimeStamp,[customerGUID],[backupFile],
-                [newFileName],[fileLength]) 
+                string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
+                newFileName,fileLength) 
                 values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
-                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     connection.Open();
                     long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                    command.Parameters.Add("@timeStamp", SqlDbType.BigInt).Value = startTimeStamp;
-                    command.Parameters.Add("@endTimeStamp", SqlDbType.BigInt).Value = timeStamp;
-                    command.Parameters.Add("@fileLength", SqlDbType.BigInt).Value = fileLength;
 
-                    command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
-                    command.Parameters.Add("@backupFile", SqlDbType.VarChar).Value = backupFileName;
-                    command.Parameters.Add("@pNewFileName", SqlDbType.VarChar).Value = pNewFileName;
+                    command.Parameters.AddWithValue("@timeStamp", startTimeStamp);
+                    command.Parameters.AddWithValue("@endTimeStamp", timeStamp);
+                    command.Parameters.AddWithValue("@fileLength", fileLength);
 
+                    command.Parameters.AddWithValue("@customerGUID", itemKey);
+                    command.Parameters.AddWithValue("@backupFile", backupFileName);
+                    command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
+                    if (false)
+                    {
+                        command.Parameters.Add("@timeStamp", MySqlDbType.Int64).Value = startTimeStamp;
+                        command.Parameters.Add("@endTimeStamp", MySqlDbType.Int64).Value = timeStamp;
+                        command.Parameters.Add("@fileLength", MySqlDbType.Int64).Value = fileLength;
+
+                        command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                        command.Parameters.Add("@backupFile", MySqlDbType.Text).Value = backupFileName;
+                        command.Parameters.Add("@pNewFileName", MySqlDbType.Text).Value = pNewFileName;
+                    }
 
                     //command.Prepare();
-                    command.BeginExecuteNonQuery();
+                    command.ExecuteNonQuery();
 
                 }
-                // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-                //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+
                 return Ok();
             }
             catch (Exception ex)
@@ -188,10 +202,6 @@ namespace BackupCoordinatorV2.Controllers
             return Ok();
 
         }
-
-        private static string? _connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");// "Endpoint =sb://securitasmachina.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IOC5nIXihyX3eKDzmvzzH20PdUnr/hyt3wydgtNe5z8=";
-        private static string _SQLConnectionString = System.Environment.GetEnvironmentVariable("SQLAZURECONNSTR_OffSiteBackupSQLConnection");
-
 
 
 
@@ -221,16 +231,16 @@ namespace BackupCoordinatorV2.Controllers
 
             bool foundCustomer = false;
             string sql = "select customerID from customers where contactEmail=@contactEmail";
-            using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand(sql, connection))
             {
                 connection.Open();
 
-                command.Parameters.Add("@contactEmail", SqlDbType.VarChar).Value = contactEmail;
-                using SqlDataReader rdr = command.ExecuteReader();
+                command.Parameters.Add("@contactEmail", MySqlDbType.VarChar).Value = contactEmail;
+                using MySqlDataReader rdr = command.ExecuteReader();
                 while (rdr.Read())
                 {
-                    newGuid = rdr.GetGuid(0);
+                    newGuid = new Guid(rdr.GetString(0));
                     foundCustomer = true;
                 }
             }
@@ -239,24 +249,24 @@ namespace BackupCoordinatorV2.Controllers
             {
                 try
                 {
-                    sql = @"INSERT INTO[dbo].[customers]
-           ([customerID],name,contactEmail,SubscriptionName,FulfillmentStatus,SubscriptionId,TenantId,PurchaseIdToken)
+                    sql = @"INSERT INTO customers
+           (customerID,contactName,contactEmail,SubscriptionName,FulfillmentStatus,SubscriptionId,TenantId,PurchaseIdToken)
      VALUES
            (@customerID,@contactName,@contactEmail,@SubscriptionName,@FulfillmentStatus,@SubscriptionId,@TenantId,@PurchaseIdToken)";
 
-                    using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         connection.Open();
 
-                        command.Parameters.Add("@customerID", SqlDbType.UniqueIdentifier).Value = newGuid;
-                        command.Parameters.Add("@contactName", SqlDbType.NVarChar).Value = contactName;
-                        command.Parameters.Add("@contactEmail", SqlDbType.NVarChar).Value = contactEmail;
-                        command.Parameters.Add("@SubscriptionName", SqlDbType.NVarChar).Value = SubscriptionName;
-                        command.Parameters.Add("@FulfillmentStatus", SqlDbType.NVarChar).Value = FulfillmentStatus;
-                        command.Parameters.Add("@SubscriptionId", SqlDbType.NVarChar).Value = SubscriptionId;
-                        command.Parameters.Add("@TenantId", SqlDbType.NVarChar).Value = TenantId;
-                        command.Parameters.Add("@PurchaseIdToken", SqlDbType.NVarChar).Value = PurchaseIdToken;
+                        command.Parameters.Add("@customerID", MySqlDbType.VarString).Value = newGuid.ToString();
+                        command.Parameters.Add("@contactName", MySqlDbType.VarString).Value = contactName;
+                        command.Parameters.Add("@contactEmail", MySqlDbType.VarString).Value = contactEmail;
+                        command.Parameters.Add("@SubscriptionName", MySqlDbType.VarString).Value = SubscriptionName;
+                        command.Parameters.Add("@FulfillmentStatus", MySqlDbType.VarString).Value = FulfillmentStatus;
+                        command.Parameters.Add("@SubscriptionId", MySqlDbType.VarString).Value = SubscriptionId;
+                        command.Parameters.Add("@TenantId", MySqlDbType.VarString).Value = TenantId;
+                        command.Parameters.Add("@PurchaseIdToken", MySqlDbType.VarString).Value = PurchaseIdToken;
                         command.ExecuteNonQuery();
 
                         // return Ok(ret);
@@ -268,34 +278,38 @@ namespace BackupCoordinatorV2.Controllers
                     DBSingleTon.Instance.write2Log(newGuid.ToString(), "ERROR", ex.ToString());
 
                     _logger.LogError(ex.ToString());
-                    //return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
                 }
 
 
                 try
                 {
-                    // TokenCredential tk = new TokenCredential();
-                    string userAssignedClientId = "e837d735-07e0-4adc-9336-80344215b102";
-                    //DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
-                   // TokenRequestContext requestContext = default;
-                    TokenCredential credential2 = new ClientSecretCredential("db2361da-c4d2-4472-85dc-00969813cbe0", "e837d735-07e0-4adc-9336-80344215b102", "HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA");
-                    var client2 = new ServiceBusClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2);
-                    //AccessToken tk = credential.GetToken(requestContext);
-                    AccessToken accessToken;
-                    //value: HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA
-                    //Secret: 82b86ae3-eb2a-47fd-8f3b-152e1b50c5a6
-                    //e837d735-07e0-4adc-9336-80344215b102
-                    //var _managedCredential = new ManagedIdentityCredential("e837d735-07e0-4adc-9336-80344215b102");
-                   // accessToken = await credential.GetTokenAsync(
-                   //                         new TokenRequestContext(
-                  //                              new[] { "https://servicebus.azure.net" })).ConfigureAwait(false);
-                    ServiceBusAdministrationClientOptions options = new ServiceBusAdministrationClientOptions();
-                    //accessToken.
-                    //    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(credential,"Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=ProvisioningPolicy;SharedAccessKey=rR1lVUGwoWh+avYBsRmC+AWgnKNcIa9/gUAJ9vf0iHI=;EntityPath=ab50c41e-3814-4533-8f68-a691b4da9043");
-                    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient( "SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2, options);
-                    string subscriptionsName = "client";
+                    if (false)
+                    {
+                        // TokenCredential tk = new TokenCredential();
+                        string userAssignedClientId = "e837d735-07e0-4adc-9336-80344215b102";
+                        //DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
+                        // TokenRequestContext requestContext = default;
 
-                    await client.CreateSubscriptionAsync(newGuid.ToString(), subscriptionsName);
+                        TokenCredential credential2 = new DefaultAzureCredential();// new ClientSecretCredential("db2361da-c4d2-4472-85dc-00969813cbe0", "e837d735-07e0-4adc-9336-80344215b102", "HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA");
+                                                                                   // var client2 = new ServiceBusClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2);
+                                                                                   //AccessToken tk = credential.GetToken(requestContext);
+                        AccessToken accessToken;
+                        //value: HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA
+                        //Secret: 82b86ae3-eb2a-47fd-8f3b-152e1b50c5a6
+                        //e837d735-07e0-4adc-9336-80344215b102
+                        //var _managedCredential = new ManagedIdentityCredential("e837d735-07e0-4adc-9336-80344215b102");
+                        // accessToken = await credential.GetTokenAsync(
+                        //                         new TokenRequestContext(
+                        //                              new[] { "https://servicebus.azure.net" })).ConfigureAwait(false);
+                        ServiceBusAdministrationClientOptions options = new ServiceBusAdministrationClientOptions();
+                        //accessToken.
+                        //    ServiceBusAdministrationClient client = new ServiceBusAdministrationClient(credential,"Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=ProvisioningPolicy;SharedAccessKey=rR1lVUGwoWh+avYBsRmC+AWgnKNcIa9/gUAJ9vf0iHI=;EntityPath=ab50c41e-3814-4533-8f68-a691b4da9043");
+                        ServiceBusAdministrationClient client = new ServiceBusAdministrationClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2, options);
+                        string subscriptionsName = "client";
+
+                        await client.CreateSubscriptionAsync(newGuid.ToString(), subscriptionsName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -318,14 +332,14 @@ namespace BackupCoordinatorV2.Controllers
             try
             {
 
-                string sql = "select timeStamp2,backupFile,newFileName,fileLength,endTimeStamp from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
-                using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                string sql = "select starttimeStamp,backupFile,newFileName,fileLength,endTimeStamp from backupHistory where customerGUID=@customerGUID order by timeStamp2 desc";
+                using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     connection.Open();
 
-                    command.Parameters.Add("@customerGUID", SqlDbType.VarChar).Value = itemKey;
-                    using SqlDataReader rdr = command.ExecuteReader();
+                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                    using MySqlDataReader rdr = command.ExecuteReader();
                     while (rdr.Read())
                     {
                         BackupHistoryDTO logMsgDTO = new BackupHistoryDTO();
@@ -337,14 +351,13 @@ namespace BackupCoordinatorV2.Controllers
                             logMsgDTO.fileLength = rdr.GetInt64(3);
                         if (!rdr.IsDBNull(4))
                             logMsgDTO.endTimeStamp = rdr.GetInt64(4);
-                        
+
 
                         ret.Add(logMsgDTO);
-                        // Console.WriteLine($"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetInt32(2)}");
+
                     }
                 }
-                // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-                //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", jsonPopulated);
+
 
             }
             catch (Exception ex)
@@ -370,8 +383,8 @@ namespace BackupCoordinatorV2.Controllers
                 try
                 {
                     string sql = "select * from backupHistory where customerGUID='ab5fc41e-3814-4533-8f68-a691b4da9043";
-                    using (SqlConnection connection = new SqlConnection(_SQLConnectionString))
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
 
                         connection.Open();

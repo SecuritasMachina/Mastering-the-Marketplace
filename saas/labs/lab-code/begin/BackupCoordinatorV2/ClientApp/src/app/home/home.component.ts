@@ -23,8 +23,8 @@ export class HomeComponent implements OnInit {
       GlobalConstModule.guid = urlParams.get('guid');
       console.warn("GlobalConstModule.guid:" + GlobalConstModule.guid);
       this._guid = GlobalConstModule.guid;
-      if (GlobalConstModule.guid != null)
-        this.router.navigate(['/' + GlobalConstModule.guid]);
+      //if (GlobalConstModule.guid != null)
+      //  this.router.navigate(['/' + GlobalConstModule.guid]);
     }
   }
   ngOnInit(): void {

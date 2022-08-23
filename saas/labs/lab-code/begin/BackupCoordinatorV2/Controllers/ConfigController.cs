@@ -26,21 +26,23 @@ namespace BackupCoordinatorV2.Controllers
         }
 
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v2/config/{customerGuid}")]
-        public string Get(string customerGuid)
+        public AgentConfig Get(string customerGuid)
         {
             _logger.LogInformation("looking up " + customerGuid);
 
-          
+
             AgentConfig agentConfig = GetAgentConfig(customerGuid);
-           
-            string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " +jsonPopulated.Length);
-            return jsonPopulated;
+
+           // string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
+            DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "AgentConfig Get");
+            return agentConfig;
 
 
         }
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v2/customerConfig/{customerGuid}")]
         public AgentConfig customerConfig(string customerGuid)
         {
@@ -48,9 +50,8 @@ namespace BackupCoordinatorV2.Controllers
 
 
             AgentConfig ret = GetAgentConfig(customerGuid);
-            ret.ServiceBusEndPoint = null;
-        //    string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-            ///     DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " + jsonPopulated.Length);
+            ret.serviceBusEndPoint = null;
+
             return ret;
 
 
@@ -58,44 +59,37 @@ namespace BackupCoordinatorV2.Controllers
         public AgentConfig GetAgentConfig(string customerGuid)
         {
             AgentConfig ret = new AgentConfig();
-            if (customerGuid.Equals("null"))
+            if (customerGuid.Equals("null") || customerGuid.Length < 4)
             {
+                ret.name = "Missing Customer GUID";
                 return ret;
             }
             _logger.LogInformation("looking up " + customerGuid);
 
-            // string connectionString = System.Environment.GetEnvironmentVariable("CUSTOMCONNSTR_OffSiteServiceBusConnection");
-           
-
-           
             using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
             using (MySqlCommand command = new MySqlCommand("select * from customers where customerId = @customerId", connection))
             {
-                //Sq//lParameter[] param = new SqlParameter[1];
-                //param[0] = new SqlParameter("@customerId",new Guid(customerGuid));
-                //command.Parameters.Add(param[0]);
+
                 command.Parameters.Add("@customerId", MySqlDbType.VarChar).Value = customerGuid;
                 connection.Open();
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
-
                     {
                         ret.passPhrase = reader["passPhrase"].ToString();
                         ret.name = reader["contactname"].ToString();
                         ret.contactEmail = reader["contactEmail"].ToString();
-                        ret.ServiceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
-                        ret.topicName = "controller";
-
+                        ret.serviceBusEndPoint = "Endpoint=sb://securitasmachinaoffsiteclients.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=z0RU2MtEivO9JGSwhwLkRb8P6fg6v7A9MET5tNuljbQ=";
+                        ret.controllerTopicName = "controller";
+                        ret.clientSubscriptionName = "client";
+                        ret.authKey = Utils.Utils.EncryptString(customerGuid, customerGuid + ":" + customerGuid + customerGuid);
 
                     }
                 }
             }
-            //string jsonPopulated = JsonConvert.SerializeObject(agentConfig);
-            //DBSingleTon.Instance.write2Log(customerGuid, "DEBUG", "jsonPopulated: " + jsonPopulated.Length);
+            string jsonString = JsonConvert.SerializeObject(ret);
+            Console.WriteLine(jsonString);
             return ret;
-
-
         }
     }
 }

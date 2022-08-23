@@ -27,7 +27,7 @@ export class NavMenuComponent {
       if (GlobalConstModule.guid != null) {
         console.info("NavMenuComponent GlobalConstModule.guid2", GlobalConstModule.guid);
         this._guid = GlobalConstModule.guid;
-        this.router.navigate(['/', GlobalConstModule.guid]);
+       // this.router.navigate(['/', GlobalConstModule.guid]);
        
       }
       else {

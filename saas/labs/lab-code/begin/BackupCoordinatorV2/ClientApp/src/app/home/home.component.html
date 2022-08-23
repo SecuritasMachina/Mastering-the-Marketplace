@@ -1,5 +1,35 @@
 <h1>Hello, {{_AgentConfig.name}}</h1>
 <a href="https://storage.googleapis.com/securitasmachina.com/OffsiteBackup_InstallInstructions.pdf" target="_blank">Agent &amp; Azure Configuration</a>
 
-<p>Welcome to your new backup coordinator</p>
+<hr />
+ Agent Status:
+<canvas baseChart width="800" height="400"
+        [type]="'line'"
+        [datasets]="_upTimeChartData"
+        [options]="lineChartOptions"
+        [labels]="_upTimeChartDataLabels"
+        [legend]="lineChartLegend"
+        >
+</canvas>
+Offsite files:
+<canvas baseChart width="800" height="400"
+        [type]="'line'"
+        [datasets]="_offsiteFilesChartData"
+        [options]="lineChartOptions"
+        [legend]="lineChartLegend">
+</canvas>
+Active Restores:
+<canvas baseChart width="800" height="400"
+        [type]="'line'"
+        [datasets]="_activeRestoresChartData"
+        [options]="lineChartOptions"
+        [legend]="lineChartLegend">
+</canvas>
+Active Backups:
+<canvas baseChart width="800" height="400"
+        [type]="'line'"
+        [datasets]="_activeBackupsChartData"
+        [options]="lineChartOptions"
+        [legend]="lineChartLegend">
+</canvas>
 

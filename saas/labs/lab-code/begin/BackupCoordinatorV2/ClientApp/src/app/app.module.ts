@@ -15,6 +15,7 @@ import { GlobalConstModule } from './Common/global-const/global-const.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { BackupHistoryComponent } from './Components/backup-history/backup-history.component';
+import { NgChartsModule } from 'ng2-charts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +29,7 @@ import { BackupHistoryComponent } from './Components/backup-history/backup-histo
     
   ],
   imports: [
+   
     CommonModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -42,7 +44,8 @@ import { BackupHistoryComponent } from './Components/backup-history/backup-histo
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'dirListing/:guid', component: DirListingComponent },
       { path: 'logListing/:guid', component: LogListComponent },
-    ])
+    ]),
+    NgChartsModule
   ],
   providers: [],
   

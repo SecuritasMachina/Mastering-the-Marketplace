@@ -58,11 +58,11 @@ string version = cmd.ExecuteScalar().ToString();
 
 app.Logger.LogInformation("SELECT SQLITE_VERSION: " + version);
 stm = @"CREATE TABLE mycache(id TEXT PRIMARY KEY,
-            msg TEXT,timeEntered REAL)";
+            msg TEXT,timeEntered REAL,source TEXT)";
 cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
 stm = @"CREATE TABLE mylog(id TEXT, logType TEXT, logTime REAL,
-            msg TEXT)";
+            msg TEXT, source TEXT)";
 cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
 cmd.ExecuteNonQuery();
 

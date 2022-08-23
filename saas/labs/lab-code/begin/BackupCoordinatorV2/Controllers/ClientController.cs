@@ -50,7 +50,7 @@ namespace BackupCoordinatorV2.Controllers
         [Consumes("application/json")]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/agentDir/{customerGUID}")]
-        public async Task<ActionResult> agentDirGet( string customerGUID)
+        public async Task<ActionResult> agentDirGet(string customerGUID)
         {
 
             return Ok(getCache("AgentStagingList-" + customerGUID));
@@ -149,10 +149,11 @@ namespace BackupCoordinatorV2.Controllers
             {
                 try
                 {
-                    string stm = "INSERT INTO mycache(id, msg,timeEntered) VALUES(@myId, @myJson, @timeEntered)";
+                    string stm = "INSERT INTO mycache(id, msg,timeEntered, source) VALUES(@myId, @myJson, @timeEntered, @source)";
                     SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
                     long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                     cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@source", "agent");
                     cmd2.Parameters.AddWithValue("@timeEntered", unixTimeMilliseconds);
                     cmd2.Parameters.AddWithValue("@myJson", json);
                     cmd2.Prepare();
@@ -227,17 +228,22 @@ namespace BackupCoordinatorV2.Controllers
                 newGuid = new Guid(pSubscriptionGuid);
             }
             catch (Exception ignore) { }
-
+            //DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
+            DBSingleTon.Instance.write2SQLLog(newGuid.ToString(), "INFO", pFormBody.ToString());
             dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
-            DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
+
             string contactName = stuff.DisplayName == null ? " stuff.DisplayName" : stuff.DisplayName;
-            string contactEmail = stuff.Email == null ? " stuff.Email" : stuff.Email;
+            string contactEmail = stuff.Email == null ? "" : stuff.Email;
             string SubscriptionName = stuff.SubscriptionName == null ? " stuff.SubscriptionName" : stuff.SubscriptionName;
             string FulfillmentStatus = stuff.FulfillmentStatus == null ? " stuff.FulfillmentStatus" : stuff.FulfillmentStatus;
             string SubscriptionId = stuff.SubscriptionId == null ? " stuff.SubscriptionId" : stuff.SubscriptionId;
             string TenantId = stuff.TenantId == null ? " stuff.TenantId" : stuff.TenantId;
             string PurchaseIdToken = stuff.PurchaseIdToken == null ? " stuff.PurchaseIdToken" : stuff.PurchaseIdToken;
-
+            if (contactEmail.Equals(""))
+            {
+                DBSingleTon.Instance.write2SQLLog(newGuid.ToString(), "ERROR", "provisionUser Missing valid email");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Missing valid email");
+            }
 
             bool foundCustomer = false;
             string sql = "select customerID from customers where contactEmail=@contactEmail";
@@ -294,6 +300,17 @@ namespace BackupCoordinatorV2.Controllers
 
                 try
                 {
+                    if (false)//permission denied
+                    {
+                        string userAssignedClientId = "f160bcf9-1269-447e-8976-25dde3c6e6e0";
+                        DefaultAzureCredential credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
+                        TokenCredential credential2 = new ClientSecretCredential("db2361da-c4d2-4472-85dc-00969813cbe0", "e837d735-07e0-4adc-9336-80344215b102", "HrS8Q~5RqBHy5G6PE_F9MTXSPnlOfdDypKqO-dbA");
+                        ServiceBusAdministrationClientOptions options = new ServiceBusAdministrationClientOptions();
+                        ServiceBusAdministrationClient client = new ServiceBusAdministrationClient("SecuritasMachinaOffsiteClients.servicebus.windows.net", credential2, options);
+                        string subscriptionsName = "client";
+
+                        await client.CreateSubscriptionAsync(newGuid.ToString(), subscriptionsName);
+                    }
                     if (false)
                     {
                         // TokenCredential tk = new TokenCredential();
@@ -486,5 +503,5 @@ namespace BackupCoordinatorV2.Controllers
             return Ok(json);
         }
     }
-    
+
 }

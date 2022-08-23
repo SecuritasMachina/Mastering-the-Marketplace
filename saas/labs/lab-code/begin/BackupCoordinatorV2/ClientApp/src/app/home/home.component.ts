@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router'
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -13,6 +14,80 @@ export class HomeComponent implements OnInit {
   public name: string | null | undefined = "Unknown";
   public _guid: string | null | undefined = "Unknown";
   public _AgentConfig!: AgentConfig;
+  _upTimeChartData: any[] = [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      label: 'UpTime'
+    }
+  ];
+  _upTimeChartDataLabels: any[] = [
+    'Jan',
+    'Feb',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
+  _offsiteFilesChartData: any[] = [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      label: 'OffSite Files'
+    }
+  ];
+  _activeRestoresChartData: any[] = [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      label: 'Active Restores'
+    }
+  ];
+  _activeBackupsChartData: any[] = [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      label: 'Active Backups'
+    }
+  ];
+  public lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July'
+    ],
+    datasets: [
+      {
+        data: [0, 0, 0, 0, 0, 0, 0],
+        label: 'UpTime',
+        fill: true,
+        tension: 0.5,
+        borderColor: 'black',
+        backgroundColor: 'rgba(255,0,0,0.3)'
+      }
+    ]
+  };
+  
+  public lineChartOptions: ChartOptions<'line'> = {
+    responsive: false,
+    scales: { 
+      x: {
+        display: true
+      },
+      y: {
+        display: true,
+        
+      }
+    }
+
+  };
+  public lineChartLegend = true;
 
   constructor(private _http: HttpClient,private router: Router, private globalConstModule: GlobalConstModule, private _Activatedroute: ActivatedRoute) {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
@@ -33,6 +108,7 @@ export class HomeComponent implements OnInit {
       console.info(' this.backupListingDTO', this._AgentConfig);
 
     }, (error: any) => console.error(error));
+   // this.lineChartData.datasets.
   }
 }
 interface AgentConfig {

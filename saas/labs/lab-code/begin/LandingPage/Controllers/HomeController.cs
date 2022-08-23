@@ -55,6 +55,7 @@ namespace LandingPage.Controllers
 
             // find the plan that goes with this purchase
             string planName = string.Empty;
+            string newGuidApp = Guid.NewGuid().ToString();
             foreach (var plan in subscriptionPlans.Plans)
             {
                 if (plan.PlanId == resolvedSubscription.Subscription.PlanId)
@@ -76,10 +77,11 @@ namespace LandingPage.Controllers
                 PlanName = planName,
                 SubscriptionId = resolvedSubscription.Id.ToString(),
                 TenantId = resolvedSubscription.Subscription.Beneficiary.TenantId.ToString(),
-                PurchaseIdToken = token
+                PurchaseIdToken = token,
+                newGuid = newGuidApp
             };
 
-            HTTPUtils.ProvisionUser(model.SubscriptionId, model);
+            HTTPUtils.ProvisionUser(newGuidApp, model);
 
             return View(model);
         }

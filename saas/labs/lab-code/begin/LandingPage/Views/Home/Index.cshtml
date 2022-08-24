@@ -15,36 +15,41 @@ else
         <h3>Thank you for your subscription</h3>
 
 
-       @* <p>Please verify the following information is correct before submitting your subscription for activation</p>
+       <p>Please verify the following information is correct before submitting your subscription for activation</p>
 
-        <table class="main-table">
-            <tbody>
-                <tr><td class="main-td">Current user</td><td>@Model.DisplayName</td></tr>
-                <tr><td class="main-td">Email</td><td>@Model.Email</td></tr>
-                <tr><td class="main-td">Subscription name</td><td>@Model.SubscriptionName</td></tr>
-                <tr><td class="main-td">Plan name</td><td>@Model.PlanName</td></tr>
-                <tr><td class="main-td">Subscription State</td><td>@Model.FulfillmentStatus</td></tr>
-                <tr><td class="main-td">Tenant ID</td><td>@Model.TenantId</td></tr>
-            </tbody>
-        </table>*@
+    <table class="main-table">
+    <tbody>
+    <tr><td class="main-td">Current user</td><td>@Model.DisplayName</td></tr>
+    <tr><td class="main-td">Email</td><td>@Model.Email</td></tr>
+    <tr><td class="main-td">Subscription name</td><td>@Model.SubscriptionName</td></tr>
+    <tr><td class="main-td">Plan name</td><td>@Model.PlanName</td></tr>
+    <tr><td class="main-td">Subscription State</td><td>@Model.FulfillmentStatus</td></tr>
+    <tr><td class="main-td">Tenant ID</td><td>@Model.TenantId</td></tr>
+    </tbody>
+    </table>
 
 
         <h3>Available Customer Actions</h3>
-        <p>
-            <a href="https://storage.googleapis.com/securitasmachina.com/OffsiteBackup_InstallInstructions.pdf" target="_blank">Agent &amp; Azure Configuration</a>
-        </p>
-        <p>
-        <a href="https://securitasmachinacoordinater.azurewebsites.net?guid=@Model.newGuid "  target="_blank">Your Admin Portal</a>
-        </p>
+
+
         <div style="text-align: left">
             <ul>
-               @* @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
+                <li>
+                    <a href="https://storage.googleapis.com/securitasmachina.com/OffsiteBackup_InstallInstructions.pdf" target="_blank">Agent &amp; Azure Configuration</a>
+                </li>
+                @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
                 {
                     <li>
                         @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
                     </li>
-                }*@
-                
+                }
+                else
+                {
+                    <li>
+                        <a href="https://securitasmachinacoordinater.azurewebsites.net?guid=@Model.newGuid" target="_blank">Your Admin Portal</a>
+                    </li>
+                }
+
                 @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.Subscribed)
                 {
                     <li>
@@ -52,6 +57,7 @@ else
                     </li>
                 }
             </ul>
+            
         </div>
     </div>
 }

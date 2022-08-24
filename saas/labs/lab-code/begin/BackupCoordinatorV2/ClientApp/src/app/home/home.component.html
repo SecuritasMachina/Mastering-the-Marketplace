@@ -3,30 +3,30 @@
 
 <hr />
  Agent Status:
-<canvas baseChart width="800" height="400"
+<canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_upTimeChartData"
-        [options]="lineChartOptions"
+        [options]="uptimeLineChartOptions"
         [labels]="_upTimeChartDataLabels"
         [legend]="lineChartLegend"
         >
 </canvas>
 Offsite files:
-<canvas baseChart width="800" height="400"
+<canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_offsiteFilesChartData"
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>
 Active Restores:
-<canvas baseChart width="800" height="400"
+<canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_activeRestoresChartData"
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>
 Active Backups:
-<canvas baseChart width="800" height="400"
+<canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_activeBackupsChartData"
         [options]="lineChartOptions"

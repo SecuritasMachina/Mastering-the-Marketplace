@@ -130,40 +130,7 @@ namespace BackupCoordinatorV2.Controllers
 
 
             _logger.LogInformation("/v3/putCache/" + itemKey + " " + json);
-            bool updateSuccess = false;
-            try
-            {
-                string stm = "UPDATE mycache set msg= @myJson where id =@myId";
-                SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                cmd2.Parameters.AddWithValue("@myId", itemKey);
-                cmd2.Parameters.AddWithValue("@myJson", json);
-                cmd2.Prepare();
-                int rows = cmd2.ExecuteNonQuery();
-                if (rows > 0) updateSuccess = true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-            }
-            if (!updateSuccess)
-            {
-                try
-                {
-                    string stm = "INSERT INTO mycache(id, msg,timeEntered, source) VALUES(@myId, @myJson, @timeEntered, @source)";
-                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
-                    long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                    cmd2.Parameters.AddWithValue("@myId", itemKey);
-                    cmd2.Parameters.AddWithValue("@source", "agent");
-                    cmd2.Parameters.AddWithValue("@timeEntered", unixTimeMilliseconds);
-                    cmd2.Parameters.AddWithValue("@myJson", json);
-                    cmd2.Prepare();
-                    cmd2.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
-                }
-            }
+            DBSingleTon.Instance.putCache(itemKey, json);
 
 
             return Ok();
@@ -179,28 +146,11 @@ namespace BackupCoordinatorV2.Controllers
 
             //string json = pFormBody.ToString();
             _logger.LogInformation("/apt/v1/postBackupHistory");
+            DBSingleTon.Instance.postBackup( itemKey,  backupFileName,  pNewFileName,  fileLength,  startTimeStamp);
             try
             {
-                string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
-                newFileName,fileLength) 
-                values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
-                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
-                {
-                    connection.Open();
-                    long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-
-                    command.Parameters.AddWithValue("@timeStamp", startTimeStamp);
-                    command.Parameters.AddWithValue("@endTimeStamp", timeStamp);
-                    command.Parameters.AddWithValue("@fileLength", fileLength);
-
-                    command.Parameters.AddWithValue("@customerGUID", itemKey);
-                    command.Parameters.AddWithValue("@backupFile", backupFileName);
-                    command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
-
-                    command.ExecuteNonQuery();
-
-                }
+                DBSingleTon.Instance.postBackup(itemKey, backupFileName, pNewFileName, fileLength, startTimeStamp);
+               
 
                 return Ok();
             }
@@ -219,15 +169,11 @@ namespace BackupCoordinatorV2.Controllers
         [HttpPost]
         [Consumes("application/json")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Route("/api/v3/provisionUser/{pSubscriptionGuid}")]
-        public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody, string pSubscriptionGuid)
+        [Route("/api/v3/provisionUser")]
+        public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody)
         {
             Guid newGuid = Guid.NewGuid();
-            try
-            {
-                newGuid = new Guid(pSubscriptionGuid);
-            }
-            catch (Exception ignore) { }
+           
             //DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
             DBSingleTon.Instance.write2SQLLog(newGuid.ToString(), "INFO", pFormBody.ToString());
             dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
@@ -370,8 +316,10 @@ namespace BackupCoordinatorV2.Controllers
                     while (rdr.Read())
                     {
                         BackupHistoryDTO logMsgDTO = new BackupHistoryDTO();
-                        logMsgDTO.timeStamp = rdr.GetInt64(0);
-                        logMsgDTO.backupFile = rdr.GetString(1);
+                        if (!rdr.IsDBNull(0))
+                            logMsgDTO.startTimeStamp = rdr.GetInt64(0);
+                        if (!rdr.IsDBNull(1))
+                            logMsgDTO.backupFile = rdr.GetString(1);
                         if (!rdr.IsDBNull(2))
                             logMsgDTO.newFileName = rdr.GetString(2);
                         if (!rdr.IsDBNull(3))

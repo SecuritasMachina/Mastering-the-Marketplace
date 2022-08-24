@@ -77,15 +77,29 @@ export class HomeComponent implements OnInit {
   public lineChartOptions: ChartOptions<'line'> = {
     responsive: false,
     scales: { 
-      x: {
-        display: true
+      xAxis: {
+        min: 0
       },
-      y: {
-        display: true,
+      yAxis: {
+        min: 0
+        
         
       }
     }
 
+  };
+  public uptimeLineChartOptions: ChartOptions<'line'> = {
+    responsive: false,
+    scales: {
+      xAxis: {
+        min: 0
+      },
+      yAxis: {
+        min: 0
+
+
+      }
+    }
   };
   public lineChartLegend = true;
 

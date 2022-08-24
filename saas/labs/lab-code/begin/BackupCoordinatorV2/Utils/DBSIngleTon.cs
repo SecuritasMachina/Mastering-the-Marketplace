@@ -24,6 +24,71 @@ namespace BackupCoordinatorV2.Utils
         {
             return con;
         }
+        public void postBackup(string itemKey, string backupFileName, string pNewFileName, long fileLength, long startTimeStamp)
+        {
+            
+                string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
+                newFileName,fileLength) 
+                values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+                    command.Parameters.AddWithValue("@timeStamp", startTimeStamp);
+                    command.Parameters.AddWithValue("@endTimeStamp", timeStamp);
+                    command.Parameters.AddWithValue("@fileLength", fileLength);
+
+                    command.Parameters.AddWithValue("@customerGUID", itemKey);
+                    command.Parameters.AddWithValue("@backupFile", backupFileName);
+                    command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
+
+                    command.ExecuteNonQuery();
+
+                }
+
+               // return Ok();
+            
+        }
+        public void putCache(string itemKey,string json)
+        {
+            bool updateSuccess = false;
+            try
+            {
+                string stm = "UPDATE mycache set msg= @myJson where id =@myId";
+                SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                cmd2.Parameters.AddWithValue("@myId", itemKey);
+                cmd2.Parameters.AddWithValue("@myJson", json);
+                cmd2.Prepare();
+                int rows = cmd2.ExecuteNonQuery();
+                if (rows > 0) updateSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
+
+            }
+            if (!updateSuccess)
+            {
+                try
+                {
+                    string stm = "INSERT INTO mycache(id, msg,timeEntered, source) VALUES(@myId, @myJson, @timeEntered, @source)";
+                    SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                    long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+                    cmd2.Parameters.AddWithValue("@myId", itemKey);
+                    cmd2.Parameters.AddWithValue("@source", "agent");
+                    cmd2.Parameters.AddWithValue("@timeEntered", unixTimeMilliseconds);
+                    cmd2.Parameters.AddWithValue("@myJson", json);
+                    cmd2.Prepare();
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
+                }
+            }
+        }
         public void write2Log(string custGuid, string msg)
         {
             this.write2Log(custGuid, "INFO", msg);
@@ -58,7 +123,7 @@ namespace BackupCoordinatorV2.Utils
             using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
             using (MySqlCommand cmd2 = new MySqlCommand(stm, connection))
             {
-                connection.Open();// .open();
+                connection.Open();
                 cmd2.Parameters.AddWithValue("@myId", custGuid);
                 cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
                 cmd2.Parameters.AddWithValue("@logType", pLogType);

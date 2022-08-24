@@ -37,52 +37,73 @@ namespace LandingPage.Controllers
         /// <returns></returns>
         public async Task<IActionResult> IndexAsync(string token, CancellationToken cancellationToken)
         {
+            string newGuidApp = Guid.NewGuid().ToString();
             if (string.IsNullOrEmpty(token))
             {
                 this.ModelState.AddModelError(string.Empty, "Token URL parameter cannot be empty");
                 this.ViewBag.Message = "Token URL parameter cannot be empty";
                 return this.View();
             }
-
-
-            // resolve the subscription using the marketplace purchase id token
-            // this is the token that comes in on the querystring
-            var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
-
-            // get the plans on this subscription
-            // we want these to display the plans associated with this subscription
-            var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
-
-            // find the plan that goes with this purchase
-            string planName = string.Empty;
-            string newGuidApp = Guid.NewGuid().ToString();
-            foreach (var plan in subscriptionPlans.Plans)
+            var model = new IndexViewModel();
+            if (token.Equals("testTOkenPIA"))
             {
-                if (plan.PlanId == resolvedSubscription.Subscription.PlanId)
+                // build the model
+                model = new IndexViewModel
                 {
-                    planName = plan.DisplayName;
-                }
+                    DisplayName = "TEST USER",
+                    Email = "TESTEMAIL.COM",
+                    SubscriptionName = "SubscriptionName",
+                    
+                    PlanName = "PlanName",
+                    SubscriptionId = "SubscriptionId",
+                    TenantId = "TenantId",
+                    PurchaseIdToken = token,
+                    newGuid = newGuidApp
+                };
+                string newGuidApp2 = HTTPUtils.ProvisionUser(model);
+                model.newGuid = newGuidApp2;
             }
-
-            // get graph current user data
-            var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
-
-            // build the model
-            var model = new IndexViewModel
+            else
             {
-                DisplayName = graphApiUser.DisplayName,
-                Email = graphApiUser.Mail,
-                SubscriptionName = resolvedSubscription.SubscriptionName,
-                FulfillmentStatus = resolvedSubscription.Subscription.SaasSubscriptionStatus.GetValueOrDefault(),
-                PlanName = planName,
-                SubscriptionId = resolvedSubscription.Id.ToString(),
-                TenantId = resolvedSubscription.Subscription.Beneficiary.TenantId.ToString(),
-                PurchaseIdToken = token,
-                newGuid = newGuidApp
-            };
 
-            HTTPUtils.ProvisionUser(newGuidApp, model);
+                // resolve the subscription using the marketplace purchase id token
+                // this is the token that comes in on the querystring
+                var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
 
+                // get the plans on this subscription
+                // we want these to display the plans associated with this subscription
+                var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+
+                // find the plan that goes with this purchase
+                string planName = string.Empty;
+                
+                foreach (var plan in subscriptionPlans.Plans)
+                {
+                    if (plan.PlanId == resolvedSubscription.Subscription.PlanId)
+                    {
+                        planName = plan.DisplayName;
+                    }
+                }
+
+                // get graph current user data
+                var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
+
+                // build the model
+                 model = new IndexViewModel
+                {
+                    DisplayName = graphApiUser.DisplayName,
+                    Email = graphApiUser.Mail,
+                    SubscriptionName = resolvedSubscription.SubscriptionName,
+                    FulfillmentStatus = resolvedSubscription.Subscription.SaasSubscriptionStatus.GetValueOrDefault(),
+                    PlanName = planName,
+                    SubscriptionId = resolvedSubscription.Id.ToString(),
+                    TenantId = resolvedSubscription.Subscription.Beneficiary.TenantId.ToString(),
+                    PurchaseIdToken = token,
+                    newGuid = newGuidApp
+                };
+                string newGuidApp2 = HTTPUtils.ProvisionUser(model);
+                model.newGuid = newGuidApp2;
+            }
             return View(model);
         }
 

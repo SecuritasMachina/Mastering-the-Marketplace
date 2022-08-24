@@ -1,4 +1,5 @@
 using Azure.Messaging.ServiceBus;
+using BackupCoordinatorV2.Controllers;
 using BackupCoordinatorV2.Utils;
 using Common.DTO.V2;
 using Common.Statics;
@@ -27,6 +28,7 @@ builder.Services.AddCors(options =>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddControllersWithViews();
+builder.Services.AddHostedService<ServiceBusHostedService>();
 
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
@@ -41,16 +43,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
-//app.MapHttpAttributeRoutes();
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-
-
-
 
 string stm = "SELECT SQLITE_VERSION()";
 var cmd = new SqliteCommand(stm, DBSingleTon.Instance.getCon());

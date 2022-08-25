@@ -2,33 +2,53 @@
 <a href="https://storage.googleapis.com/securitasmachina.com/OffsiteBackup_InstallInstructions.pdf" target="_blank">Agent &amp; Azure Configuration</a>
 
 <hr />
- Agent Status:
+
+<div class="container">
+  <div class="row">
+    
+    <div class="col-md">
+      Last Agent Ping: {{_ReportDTO.lastDateEnteredTimestamp | date:'medium'}}
+    </div>
+    <div class="col-sm">
+      Total Backups: {{_totalBackups}}
+    </div>
+    <div class="col-sm">
+      Total Restores: {{_ReportDTO.totalRestores}}
+    </div>
+    <div class="col-sm">
+      Total Offsite files: {{_totalOffsiteBackups}}
+    </div>
+  </div>
+</div>
+ Agent Checkins:
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_upTimeChartData"
         [options]="uptimeLineChartOptions"
         [labels]="_upTimeChartDataLabels"
-        [legend]="lineChartLegend"
-        >
+        [legend]="lineChartLegend">
 </canvas>
-Offsite files:
+<!--Offsite files:
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_offsiteFilesChartData"
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>
-Active Restores:
+
+ Restores:
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_activeRestoresChartData"
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>
-Active Backups:
+    -->
+ Backups:
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_activeBackupsChartData"
+        [labels]="_activeBackupsDataLabels"
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>

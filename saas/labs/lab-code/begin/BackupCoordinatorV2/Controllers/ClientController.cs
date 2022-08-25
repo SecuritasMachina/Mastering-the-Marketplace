@@ -16,6 +16,7 @@ using Azure.Messaging.ServiceBus.Administration;
 using Azure.Identity;
 using Azure.Core;
 using MySql.Data.MySqlClient;
+using BackupCoordinatorV2.Models;
 
 namespace BackupCoordinatorV2.Controllers
 {
@@ -294,7 +295,96 @@ namespace BackupCoordinatorV2.Controllers
             return Ok(newGuid.ToString());
         }
 
+        //
+        //
+
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/PerfHistory/{itemKey}")]
+        public ActionResult<ReportDTO> getPerfHistory(string itemKey)
+        {
+            ReportDTO ret = new ReportDTO();
+            ret.offSiteFileReportItems = new List<ReportItemDTO>();
+            ret.dirListFileReportItems = new List<ReportItemDTO>();
+            ret.backupItemsFileReportItems = new List<ReportItemDTO>();
+            //string json = pFormBody.ToString();
+            _logger.LogInformation("/apt/v3/PerfHistory");
+            try
+            {
+
+                string sql = "SELECT dateEntered,count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='BACKUP-END' group by day(dateEntered) order by dateEntered asc";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+
+                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                    using MySqlDataReader rdr = command.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        ReportItemDTO logMsgDTO = new ReportItemDTO();
+                        if (!rdr.IsDBNull(0))
+                            logMsgDTO.myDate = rdr.GetDateTime(0);
+                        if (!rdr.IsDBNull(1))
+                            logMsgDTO.myCount = rdr.GetInt64(1);
+
+                        ret.backupItemsFileReportItems.Add(logMsgDTO);
+
+                    }
+                }
+                 sql = "SELECT count(1) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='RESTORE-END' ";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+
+                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                    ret.totalRestores = (long)command.ExecuteScalar();
+                    
+                }
+                sql = "SELECT max(dateEnteredtimestamp) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='DIRLIST' ";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+
+                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                    ret.lastDateEnteredTimestamp = (long)command.ExecuteScalar();
+
+                }
+                sql = "SELECT dateEntered,count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and msgtype='DIRLIST' group by day(dateEntered) order by dateEntered asc";
+                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+
+                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                    using MySqlDataReader rdr = command.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        ReportItemDTO logMsgDTO = new ReportItemDTO();
+                        if (!rdr.IsDBNull(0))
+                            logMsgDTO.myDate = rdr.GetDateTime(0);
+                        if (!rdr.IsDBNull(1))
+                            logMsgDTO.myCount = rdr.GetInt64(1);
+
+                        ret.dirListFileReportItems.Add(logMsgDTO);
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                DBSingleTon.Instance.write2Log(itemKey, "ERROR", ex.ToString());
+                _logger.LogError(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
+            }
+            return Ok(ret);
+        }
+
+
+            [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/BackupHistory/{itemKey}")]
         public ActionResult<List<BackupHistoryDTO>> getBackupHistory(string itemKey)

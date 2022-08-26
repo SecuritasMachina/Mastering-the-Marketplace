@@ -147,11 +147,11 @@ namespace BackupCoordinatorV2.Controllers
 
             //string json = pFormBody.ToString();
             _logger.LogInformation("/apt/v1/postBackupHistory");
-            DBSingleTon.Instance.postBackup( itemKey,  backupFileName,  pNewFileName,  fileLength,  startTimeStamp);
+            DBSingleTon.Instance.postBackup(itemKey, backupFileName, pNewFileName, fileLength, startTimeStamp);
             try
             {
                 DBSingleTon.Instance.postBackup(itemKey, backupFileName, pNewFileName, fileLength, startTimeStamp);
-               
+
 
                 return Ok();
             }
@@ -174,7 +174,7 @@ namespace BackupCoordinatorV2.Controllers
         public async Task<ActionResult> provisionUserAsync([FromBody] object pFormBody)
         {
             Guid newGuid = Guid.NewGuid();
-           
+
             //DBSingleTon.Instance.write2Log(newGuid.ToString(), "INFO", pFormBody.ToString());
             DBSingleTon.Instance.write2SQLLog(newGuid.ToString(), "INFO", pFormBody.ToString());
             dynamic stuff = JsonConvert.DeserializeObject(pFormBody.ToString());
@@ -312,7 +312,7 @@ namespace BackupCoordinatorV2.Controllers
             try
             {
 
-                string sql = "SELECT dateEntered,count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='BACKUP-END' group by day(dateEntered) order by dateEntered asc";
+                string sql = "SELECT DATE_FORMAT(date(dateEntered),'%Y-%m-%d'),count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='BACKUP-END' group by day(dateEntered) order by dateEntered asc";
                 using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -324,7 +324,7 @@ namespace BackupCoordinatorV2.Controllers
                     {
                         ReportItemDTO logMsgDTO = new ReportItemDTO();
                         if (!rdr.IsDBNull(0))
-                            logMsgDTO.myDate = rdr.GetDateTime(0);
+                            logMsgDTO.myDate = rdr.GetString(0);
                         if (!rdr.IsDBNull(1))
                             logMsgDTO.myCount = rdr.GetInt64(1);
 
@@ -332,27 +332,10 @@ namespace BackupCoordinatorV2.Controllers
 
                     }
                 }
-                 sql = "SELECT count(1) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='RESTORE-END' ";
-                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
-                {
-                    connection.Open();
+                ret.totalRestores=DBSingleTon.Instance.getField(itemKey,"SELECT count(1) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='RESTORE-END' ");
+                ret.lastDateEnteredTimestamp = DBSingleTon.Instance.getField(itemKey, "SELECT max(dateEnteredtimestamp) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='DIRLIST'");
 
-                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
-                    ret.totalRestores = (long)command.ExecuteScalar();
-                    
-                }
-                sql = "SELECT max(dateEnteredtimestamp) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='DIRLIST' ";
-                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
-                {
-                    connection.Open();
-
-                    command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
-                    ret.lastDateEnteredTimestamp = (long)command.ExecuteScalar();
-
-                }
-                sql = "SELECT dateEntered,count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and msgtype='DIRLIST' group by day(dateEntered) order by dateEntered asc";
+                sql = "SELECT DATE_FORMAT(date(dateEntered),'%Y-%m-%d'),count(msgType) FROM offsite.CustomerLogs where customerguid=@customerGUID and msgtype='DIRLIST' group by day(dateEntered) order by dateEntered asc";
                 using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -364,7 +347,7 @@ namespace BackupCoordinatorV2.Controllers
                     {
                         ReportItemDTO logMsgDTO = new ReportItemDTO();
                         if (!rdr.IsDBNull(0))
-                            logMsgDTO.myDate = rdr.GetDateTime(0);
+                            logMsgDTO.myDate = rdr.GetString(0);
                         if (!rdr.IsDBNull(1))
                             logMsgDTO.myCount = rdr.GetInt64(1);
 
@@ -384,7 +367,7 @@ namespace BackupCoordinatorV2.Controllers
         }
 
 
-            [HttpGet]
+        [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/BackupHistory/{itemKey}")]
         public ActionResult<List<BackupHistoryDTO>> getBackupHistory(string itemKey)

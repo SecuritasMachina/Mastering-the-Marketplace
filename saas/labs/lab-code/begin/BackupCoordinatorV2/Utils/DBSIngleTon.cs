@@ -177,6 +177,20 @@ namespace BackupCoordinatorV2.Utils
             }
         }
 
+        internal long getField(string itemKey, string sql)
+        {
+            long ret = 0;
+            //sql = "SELECT count(1) FROM offsite.CustomerLogs where customerguid=@customerGUID and  msgtype='RESTORE-END' ";
+            using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand(sql, connection))
+            {
+                connection.Open();
 
+                command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
+                ret=(long)command.ExecuteScalar();
+
+            }
+            return ret;
+        }
     }
 }

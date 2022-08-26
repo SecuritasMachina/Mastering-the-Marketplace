@@ -3,6 +3,6 @@
     public class ReportItemDTO
     {
         public long myCount { get; set; }
-        public DateTime myDate { get; set; }
+        public string myDate { get; set; }
     }
 }

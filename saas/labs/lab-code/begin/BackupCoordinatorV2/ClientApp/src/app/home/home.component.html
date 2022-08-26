@@ -5,10 +5,13 @@
 
 <div class="container">
   <div class="row">
-    
-    <div class="col-md">
-      Last Agent Ping: {{_ReportDTO.lastDateEnteredTimestamp | date:'medium'}}
-    </div>
+
+    <div class="col-md" *ngIf="(_timeSinceLastCheckIn>(1000*120))">
+    No agent connected in: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}} seconds
+  </div>
+  <div class="col-md" *ngIf="(_timeSinceLastCheckIn<(1000*120))">
+  Last Agent Ping: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}}
+</div>
     <div class="col-sm">
       Total Backups: {{_totalBackups}}
     </div>
@@ -16,11 +19,12 @@
       Total Restores: {{_ReportDTO.totalRestores}}
     </div>
     <div class="col-sm">
-      Total Offsite files: {{_totalOffsiteBackups}}
+      Total Offsite: {{_totalOffsiteBackups}} files {{_totalOffsiteBackupsBytes/1024/1024 | number : '1.0-0'}} GB
     </div>
   </div>
 </div>
- Agent Checkins:
+<hr/>
+ Agent Checkins
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_upTimeChartData"
@@ -44,7 +48,7 @@
         [legend]="lineChartLegend">
 </canvas>
     -->
- Backups:
+ Backups
 <canvas baseChart width="800" height="200"
         [type]="'line'"
         [datasets]="_activeBackupsChartData"

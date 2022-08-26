@@ -297,8 +297,16 @@ namespace BackupCoordinatorV2.Controllers
 
         //
         //
-
         [HttpGet]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Route("/api/v3/ListCache1")]
+        public ActionResult<string> listCache()
+        {
+           
+            return Ok(DBSingleTon.Instance.listCache());
+            
+        }
+            [HttpGet]
         [Produces(MediaTypeNames.Application.Json)]
         [Route("/api/v3/PerfHistory/{itemKey}")]
         public ActionResult<ReportDTO> getPerfHistory(string itemKey)

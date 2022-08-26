@@ -7,11 +7,14 @@
   <div class="row">
 
     <div class="col-md" *ngIf="(_timeSinceLastCheckIn>(1000*120))">
-    No agent connected in: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}} seconds
-  </div>
-  <div class="col-md" *ngIf="(_timeSinceLastCheckIn<(1000*120))">
-  Last Agent Ping: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}}
-</div>
+      No agent connected for: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}} seconds
+    </div>
+    <div class="col-md" *ngIf="(_timeSinceLastCheckIn<(1000*120))">
+      Last Agent Ping: {{_timeSinceLastCheckIn /1000| number: '1.0-0'}}
+    </div>
+    <div class="col-sm">Threads: {{_activeThreads}}</div>
+    <div class="col-sm">Staging: {{_totalStaging}} files {{_totalStagingBytes/1024/1024 | number : '1.0-0'}} GB</div>
+
     <div class="col-sm">
       Total Backups: {{_totalBackups}}
     </div>
@@ -21,17 +24,11 @@
     <div class="col-sm">
       Total Offsite: {{_totalOffsiteBackups}} files {{_totalOffsiteBackupsBytes/1024/1024 | number : '1.0-0'}} GB
     </div>
+
   </div>
 </div>
-<hr/>
- Agent Checkins
-<canvas baseChart width="800" height="200"
-        [type]="'line'"
-        [datasets]="_upTimeChartData"
-        [options]="uptimeLineChartOptions"
-        [labels]="_upTimeChartDataLabels"
-        [legend]="lineChartLegend">
-</canvas>
+<hr />
+
 <!--Offsite files:
 <canvas baseChart width="800" height="200"
         [type]="'line'"
@@ -56,4 +53,11 @@
         [options]="lineChartOptions"
         [legend]="lineChartLegend">
 </canvas>
-
+Agent Checkins
+<canvas baseChart width="800" height="200"
+        [type]="'line'"
+        [datasets]="_upTimeChartData"
+        [options]="uptimeLineChartOptions"
+        [labels]="_upTimeChartDataLabels"
+        [legend]="lineChartLegend">
+</canvas>

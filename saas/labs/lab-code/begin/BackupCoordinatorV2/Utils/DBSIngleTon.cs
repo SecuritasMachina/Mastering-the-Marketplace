@@ -26,32 +26,32 @@ namespace BackupCoordinatorV2.Utils
         }
         public void postBackup(string itemKey, string backupFileName, string pNewFileName, long fileLength, long startTimeStamp)
         {
-            
-                string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
+
+            string sql = @"insert into backupHistory(startTimeStamp,endTimeStamp,customerGUID,backupFile,
                 newFileName,fileLength) 
                 values(@timeStamp,@endTimeStamp,@customerGUID,@backupFile,@pNewFileName,@fileLength)";
-                using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
-                {
-                    connection.Open();
-                    long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+            using (MySqlConnection connection = new MySqlConnection(DBSingleTon._SQLConnectionString))
+            using (MySqlCommand command = new MySqlCommand(sql, connection))
+            {
+                connection.Open();
+                long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
-                    command.Parameters.AddWithValue("@timeStamp", startTimeStamp);
-                    command.Parameters.AddWithValue("@endTimeStamp", timeStamp);
-                    command.Parameters.AddWithValue("@fileLength", fileLength);
+                command.Parameters.AddWithValue("@timeStamp", startTimeStamp);
+                command.Parameters.AddWithValue("@endTimeStamp", timeStamp);
+                command.Parameters.AddWithValue("@fileLength", fileLength);
 
-                    command.Parameters.AddWithValue("@customerGUID", itemKey);
-                    command.Parameters.AddWithValue("@backupFile", backupFileName);
-                    command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
+                command.Parameters.AddWithValue("@customerGUID", itemKey);
+                command.Parameters.AddWithValue("@backupFile", backupFileName);
+                command.Parameters.AddWithValue("@pNewFileName", pNewFileName);
 
-                    command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
 
-                }
+            }
 
-               // return Ok();
-            
+            // return Ok();
+
         }
-        public void putCache(string itemKey,string json)
+        public void putCache(string itemKey, string json)
         {
             bool updateSuccess = false;
             try
@@ -106,9 +106,9 @@ namespace BackupCoordinatorV2.Utils
             cmd2.Parameters.AddWithValue("@myJson", msg);
             cmd2.Prepare();
             cmd2.ExecuteNonQuery();
-            write2SQLLog(custGuid,pLogType,msg);
+            write2SQLLog(custGuid, pLogType, msg);
         }
-       
+
         public void write2SQLLog(string custGuid, string pLogType, string msg)
         {
             if (pLogType.Equals("TRACE"))
@@ -119,7 +119,7 @@ namespace BackupCoordinatorV2.Utils
             long unixTimeMilliseconds = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
             string stm = "INSERT INTO CustomerLogs(customerguid, dateEnteredtimestamp,msgType, msg) VALUES(@myId, @logTime,@logType,@myJson)";
-           
+
             using (MySqlConnection connection = new MySqlConnection(_SQLConnectionString))
             using (MySqlCommand cmd2 = new MySqlCommand(stm, connection))
             {
@@ -128,7 +128,7 @@ namespace BackupCoordinatorV2.Utils
                 cmd2.Parameters.AddWithValue("@logTime", unixTimeMilliseconds);
                 cmd2.Parameters.AddWithValue("@logType", pLogType);
                 cmd2.Parameters.AddWithValue("@myJson", msg);
-               // cmd2.Prepare();
+                // cmd2.Prepare();
                 cmd2.ExecuteNonQuery();
             }
 
@@ -136,8 +136,8 @@ namespace BackupCoordinatorV2.Utils
         public List<LogMsgDTO> getLogs(string custGuid)
         {
             List<LogMsgDTO> ret = new List<LogMsgDTO>();
-           // DateTime now = DateTime.UtcNow;
-           // long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+            // DateTime now = DateTime.UtcNow;
+            // long unixTimeMilliseconds = new DateTimeOffset(now).ToUnixTimeMilliseconds();
 
             string stm = "select logTime,msg,logType from mylog where id=@myId order by logTime desc";
             SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
@@ -187,7 +187,36 @@ namespace BackupCoordinatorV2.Utils
                 connection.Open();
 
                 command.Parameters.Add("@customerGUID", MySqlDbType.VarChar).Value = itemKey;
-                ret=(long)command.ExecuteScalar();
+                ret = (long)command.ExecuteScalar();
+
+            }
+            return ret;
+        }
+
+        internal string listCache()
+
+        {
+            string ret = "";
+            try
+            {
+                string stm = "select id,msg from mycache order by id";
+                SqliteCommand cmd2 = new SqliteCommand(stm, DBSingleTon.Instance.getCon());
+                
+
+                cmd2.Prepare();
+                
+                SqliteDataReader myReader = cmd2.ExecuteReader();
+                bool gotRead = false;
+                while (myReader.Read())
+                {
+                    gotRead = true;
+                    ret += myReader.GetString(0) + "|" + myReader.GetString(1);
+                    //genericMessage = JsonConvert.DeserializeObject<GenericMessage>(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                DBSingleTon.Instance.write2Log("", "ERROR", ex.ToString());
 
             }
             return ret;

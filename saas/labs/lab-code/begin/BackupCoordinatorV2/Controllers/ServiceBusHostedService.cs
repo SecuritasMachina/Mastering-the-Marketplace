@@ -69,11 +69,33 @@ namespace BackupCoordinatorV2.Controllers
                 string msgType = genericMessage.msgType;
                 string guid = genericMessage.guid;
                 bool isJson = false;
-                
+
                 if (nameSpace.Equals("agent/logs"))
                 {
                     //ClientController clientController = new ClientController();
                     DBSingleTon.Instance.write2Log(guid, msgType, genericMessage.msg);
+                }
+                else if (nameSpace.Equals("agent/status"))
+                {
+                    // StatusDTO statusDTO = new StatusDTO();
+                    DBSingleTon.Instance.putCache("STATUS" + "-" + guid, JsonConvert.SerializeObject(genericMessage));
+                    StatusDTO statucDTO = JsonConvert.DeserializeObject<StatusDTO>(genericMessage.msg);
+                    genericMessage = new GenericMessage();
+                    genericMessage.guid = guid;
+                    genericMessage.nameSpace = nameSpace;
+                    genericMessage.msgType = "dirListing";
+                    genericMessage.msg = JsonConvert.SerializeObject(statucDTO.AgentFileDTOs);
+                    DBSingleTon.Instance.write2SQLLog(guid, "DIRLIST", JsonConvert.SerializeObject(genericMessage));
+                    DBSingleTon.Instance.putCache(genericMessage.msgType + "-" + guid, JsonConvert.SerializeObject(genericMessage));
+                    /*
+                    genericMessage = new GenericMessage();
+                    genericMessage.guid = guid;
+                    genericMessage.nameSpace = nameSpace;
+                    genericMessage.msgType = "stagingListing";
+                    genericMessage.msg = JsonConvert.SerializeObject(statucDTO.StagingFileDTOs);
+
+                    DBSingleTon.Instance.putCache(genericMessage.msgType + "-" + guid, JsonConvert.SerializeObject(genericMessage));
+                    */
                 }
                 else if (nameSpace.Equals("agent/putCache"))
                 {
@@ -81,7 +103,7 @@ namespace BackupCoordinatorV2.Controllers
                 }
                 else if (nameSpace.Equals("agent/backupHistory"))
                 {
-                    BackupHistoryDTO backupHistoryDTO = JsonConvert.DeserializeObject<BackupHistoryDTO>( genericMessage.msg);
+                    BackupHistoryDTO backupHistoryDTO = JsonConvert.DeserializeObject<BackupHistoryDTO>(genericMessage.msg);
                     DBSingleTon.Instance.postBackup(guid, backupHistoryDTO.backupFile, backupHistoryDTO.newFileName, backupHistoryDTO.fileLength, backupHistoryDTO.startTimeStamp);
                 }
             }
@@ -92,7 +114,7 @@ namespace BackupCoordinatorV2.Controllers
 
                 genericMessage2.msgType = "restoreComplete";
                 genericMessage2.msg = ex.Message.ToString();
-             }
+            }
             // complete the message. message is deleted from the queue. 
             await args.CompleteMessageAsync(args.Message);
         }

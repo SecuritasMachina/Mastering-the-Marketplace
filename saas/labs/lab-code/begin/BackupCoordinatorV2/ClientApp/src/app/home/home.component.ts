@@ -13,12 +13,12 @@ export class HomeComponent implements OnInit {
 
   public name: string | null | undefined = "Unknown";
   public _guid: string | null | undefined = "Unknown";
-  public _timeSinceLastCheckIn: number=0;
+  public _timeSinceLastCheckIn: number = 0;
   public _AgentConfig!: AgentConfig;
   public _ReportDTO!: ReportDTO;
   public _totalBackups: number = 0;
   public _totalRestores: number = 0;
- 
+
   public _totalOffsiteBackups: number = 0;
 
   _upTimeChartData: any[] = [
@@ -100,9 +100,12 @@ export class HomeComponent implements OnInit {
     }
   };
   public lineChartLegend = true;
-    public _totalOffsiteBackupsBytes: number=0;
-    timerId: any;
-    timer1Sec: any;
+  public _totalOffsiteBackupsBytes: number = 0;
+  timerId: any;
+  timer1Sec: any;
+  public _activeThreads: number = 0;
+  public _totalStaging: number = 0;
+  public _totalStagingBytes: number = 0;
 
   constructor(private _http: HttpClient, private router: Router, private globalConstModule: GlobalConstModule, private _Activatedroute: ActivatedRoute) {
     this._guid = this._Activatedroute.snapshot.paramMap.get("guid");
@@ -119,7 +122,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this._http.get<AgentConfig>(environment.appServerURL + '/api/v2/customerConfig/' + this._guid).subscribe(result => {
       this._AgentConfig = result;
-     
+
 
     }, (error: any) => console.error(error));
     this.timerId = setInterval(() => {
@@ -130,55 +133,64 @@ export class HomeComponent implements OnInit {
     }, 1000);
     this.syncDirList();
 
-   // const chart: Chart = new Chart(ctx, {});
+    // const chart: Chart = new Chart(ctx, {});
   }
-    page1SecUpdate() {
-      this._timeSinceLastCheckIn+=1000;
-    }
-    syncDirList() {
-      this._http.get<ReportDTO>(environment.appServerURL + '/api/v3/PerfHistory/' + this._guid).subscribe(result => {
-        this._ReportDTO = result;
-        console.info(' this.ReportDTO', this._ReportDTO);
-        this._upTimeChartData[0].data = [];
-        this._activeBackupsChartData[0].data = [];
-        this._upTimeChartDataLabels = [];
-        this._activeBackupsDataLabels = [];
-        this._ReportDTO.dirListFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
+  page1SecUpdate() {
+    this._timeSinceLastCheckIn += 1000;
+  }
+  syncDirList() {
+    this._http.get<ReportDTO>(environment.appServerURL + '/api/v3/PerfHistory/' + this._guid).subscribe(result => {
+      this._ReportDTO = result;
+      console.info(' this.ReportDTO', this._ReportDTO);
+      this._upTimeChartData[0].data = [];
+      this._activeBackupsChartData[0].data = [];
+      this._upTimeChartDataLabels = [];
+      this._activeBackupsDataLabels = [];
+      this._ReportDTO.dirListFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
 
-          this._upTimeChartData[0].data.push(reportItemDTO.myCount);
-          this._upTimeChartDataLabels.push(reportItemDTO.myDate);
+        this._upTimeChartData[0].data.push(reportItemDTO.myCount);
+        this._upTimeChartDataLabels.push(reportItemDTO.myDate);
+      });
+      console.info(" this._upTimeChartDataLabels", this._upTimeChartData, this._upTimeChartDataLabels);
+      this._ReportDTO.backupItemsFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
+        this._totalBackups += reportItemDTO.myCount;
+        this._activeBackupsChartData[0].data.push(reportItemDTO.myCount);
+        this._activeBackupsDataLabels.push(reportItemDTO.myDate);
+      });
+      this._ReportDTO.offSiteFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
+        //    this._totalBackups += reportItemDTO.myCount;
+        //  this._activeBackupsChartData.push(reportItemDTO.myCount);
+        // this._activeBackupsDataLabels.push(reportItemDTO.myDate);
+      });
+      for (var _chartjsindex in Chart.instances) {
+
+        Chart.instances[_chartjsindex].update();
+
+      }
+      this._timeSinceLastCheckIn = new Date().getTime() - this._ReportDTO.lastDateEnteredTimestamp;
+      this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/STATUS-' + this._guid).subscribe(result => {
+        var tmp1 = JSON.parse(result.msg);
+        console.info("getCache tmp1", tmp1);
+        this._totalOffsiteBackups = 0;
+        this._totalOffsiteBackupsBytes = 0;
+        tmp1.AgentFileDTOs.forEach((obj: any, index: any) => {
+          this._totalOffsiteBackups++;
+          this._totalOffsiteBackupsBytes += obj.length;
         });
-        console.info(" this._upTimeChartDataLabels", this._upTimeChartData, this._upTimeChartDataLabels);
-        this._ReportDTO.backupItemsFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
-          this._totalBackups += reportItemDTO.myCount;
-          this._activeBackupsChartData[0].data.push(reportItemDTO.myCount);
-          this._activeBackupsDataLabels.push(reportItemDTO.myDate);
+
+        this._totalStaging = 0;
+        this._totalStagingBytes = 0;
+        tmp1.StagingFileDTOs.forEach((obj: any, index: any) => {
+          this._totalStaging++;
+          this._totalStagingBytes += obj.length;
         });
-        this._ReportDTO.offSiteFileReportItems.forEach((reportItemDTO: ReportItemDTO, index: number): void => {
-          //    this._totalBackups += reportItemDTO.myCount;
-          //  this._activeBackupsChartData.push(reportItemDTO.myCount);
-          // this._activeBackupsDataLabels.push(reportItemDTO.myDate);
-        });
-        for (var _chartjsindex in Chart.instances) {
-
-          Chart.instances[_chartjsindex].update();
-
-        }
-        this._timeSinceLastCheckIn = new Date().getTime() - this._ReportDTO.lastDateEnteredTimestamp;
-        this._http.get<GenericMsg>(environment.appServerURL + '/api/v3/getCache/dirListing-' + this._guid).subscribe(result => {
-          var tmp1 = JSON.parse(result.msg);
-          //console.info("tmp1", tmp1);
-          tmp1.fileDTOs.forEach((obj: any, index: any) => {
-            this._totalOffsiteBackups++;
-            this._totalOffsiteBackupsBytes += obj.length;
-          });
-
-
-
-        }, (error: any) => console.error(error));
+        this._activeThreads = tmp1.activeThreads;
+        console.info("_totalOffsiteBackups", this._totalOffsiteBackups);
 
       }, (error: any) => console.error(error));
-    }
+
+    }, (error: any) => console.error(error));
+  }
 }
 interface ReportDTO {
   offSiteFileReportItems: ReportItemDTO[];

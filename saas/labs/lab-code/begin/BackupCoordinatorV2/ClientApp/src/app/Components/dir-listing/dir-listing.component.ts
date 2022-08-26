@@ -63,9 +63,10 @@ export class DirListingComponent implements OnInit, OnDestroy {
 
 
       var tmp1 = JSON.parse(result.msg);
+      console.info("tmp1", tmp1);
       this._dirListingDTO = [];
-      tmp1.fileDTOs.forEach((obj: any, index: any) => {
-
+      tmp1.forEach((obj: any, index: any) => {
+        console.info("obj", obj);
         var fileDTO = {} as DirListingDTO;
         fileDTO.FileName = obj.FileName;
         fileDTO.length = obj.length;
@@ -87,11 +88,9 @@ export class DirListingComponent implements OnInit, OnDestroy {
     //this.httpCall("POST", pRestoreFileName)
     this._http.get<GenericMsg>(environment.appServerURL + "/api/v3/getCache/" + encodeURIComponent(pRestoreFileName + "-restoreComplete-" + pGuid)).subscribe(result => {
       console.log("getCache response:", result);
-      //result.
-      //console.log("getCache this.tmp[pTimerCount]:", this.tmp[pTimerCount], pTimerCount);
+
       clearInterval(this.tmp[pTimerCount]);
-      //clearTimeout(this.tmp[pTimerCount]);
-      //this.tmp[pTimerCount] = null;
+
 
 
       dirListingDTO.forEach((obj: DirListingDTO, index: any) => {
@@ -178,8 +177,9 @@ class Timer {
 
 
         var tmp1 = JSON.parse(result.msg);
+        console.info("timer tmp1", tmp1);
         this.dirListingDTO = [];
-        tmp1.fileDTOs.forEach((obj: any, index: any) => {
+        tmp1.AgentFileDTOs.forEach((obj: any, index: any) => {
 
           var fileDTO = {} as DirListingDTO;
           fileDTO.FileName = obj.FileName;
